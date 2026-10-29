@@ -1,5 +1,5 @@
 ﻿<resources>
-    <string name="app_name">WorkOutTimer</string>
+    <string name="app_name">Lift Log</string>
     <string name="start_workout">Start Workout</string>
     <string name="dev_mode">Dev Mode</string>
     <string name="reset_all_settings">Reset All Settings</string>

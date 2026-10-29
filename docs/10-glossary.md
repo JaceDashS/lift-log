@@ -9,3 +9,6 @@ One active element with a selection box and resize handles.
 Selection formed by long press and drag, with orange highlighting.
 ## Touch Through
 Touches pass through the main overlay to the underlying application.
+
+## Lift Log
+The application product name, supplied by the app_name string resource.

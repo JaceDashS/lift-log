@@ -1,4 +1,4 @@
-# WorkOutTimer
+# Lift Log
 
 Android workout timer app with two editing surfaces that must behave the same way:
 
