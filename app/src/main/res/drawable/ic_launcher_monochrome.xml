@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/ui_launcher_icon_size"
+    android:height="@dimen/ui_launcher_icon_size"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M43.33,36.36L52.15,36.36L37.33,71.64L28.51,71.64ZM40.66,63.7L50.37,63.7L47.03,71.64L37.33,71.64ZM70.67,36.36L79.49,36.36L64.67,71.64L55.85,71.64ZM68.01,63.7L78.59,63.7L75.26,71.64L64.67,71.64Z" />
+</vector>
