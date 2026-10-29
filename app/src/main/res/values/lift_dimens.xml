@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Lift Log screens -->
+    <dimen name="lift_gutter">20dp</dimen>
+    <dimen name="lift_gap_xs">4dp</dimen>
+    <dimen name="lift_gap_sm">8dp</dimen>
+    <dimen name="lift_gap_md">12dp</dimen>
+    <dimen name="lift_gap_lg">20dp</dimen>
+    <dimen name="lift_gap_xl">32dp</dimen>
+    <dimen name="lift_radius">18dp</dimen>
+    <dimen name="lift_radius_lg">28dp</dimen>
+    <dimen name="lift_line_width">1dp</dimen>
+    <dimen name="lift_mark_size">56dp</dimen>
+    <dimen name="lift_home_start_height">200dp</dimen>
+    <dimen name="lift_tile_height">120dp</dimen>
+    <dimen name="lift_action_height">96dp</dimen>
+    <dimen name="lift_input_height">64dp</dimen>
+    <dimen name="lift_chart_height">200dp</dimen>
+    <dimen name="lift_row_height">48dp</dimen>
+    <dimen name="lift_rest_column_width">64dp</dimen>
+    <dimen name="lift_compare_row_height">52dp</dimen>
+
+    <dimen name="lift_text_caption">12sp</dimen>
+    <dimen name="lift_text_body">15sp</dimen>
+    <dimen name="lift_text_title">20sp</dimen>
+    <dimen name="lift_text_headline">28sp</dimen>
+    <dimen name="lift_text_display">36sp</dimen>
+    <dimen name="lift_text_timer">96sp</dimen>
+</resources>

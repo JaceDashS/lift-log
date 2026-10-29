@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.LiftLog" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/lift_acid</item>
+        <item name="colorPrimaryVariant">@color/lift_bg</item>
+        <item name="colorOnPrimary">@color/lift_on_acid</item>
+        <item name="colorSecondary">@color/lift_acid</item>
+        <item name="colorOnSecondary">@color/lift_on_acid</item>
+        <item name="colorSurface">@color/lift_surface</item>
+        <item name="colorOnSurface">@color/lift_text</item>
+        <item name="android:colorBackground">@color/lift_bg</item>
+        <item name="android:windowBackground">@color/lift_bg</item>
+        <item name="android:statusBarColor">@color/lift_bg</item>
+        <item name="android:navigationBarColor">@color/lift_bg</item>
+        <item name="android:textColorPrimary">@color/lift_text</item>
+        <item name="android:textColorSecondary">@color/lift_text_dim</item>
+        <item name="android:textColorHint">@color/lift_text_dim</item>
+    </style>
+
+    <style name="LiftText" parent="">
+        <item name="android:textColor">@color/lift_text</item>
+        <item name="android:textSize">@dimen/lift_text_body</item>
+    </style>
+
+    <style name="LiftText.Label">
+        <item name="android:textColor">@color/lift_text_dim</item>
+        <item name="android:textSize">@dimen/lift_text_caption</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="LiftText.Title">
+        <item name="android:textSize">@dimen/lift_text_title</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="LiftText.Headline">
+        <item name="android:textSize">@dimen/lift_text_headline</item>
+        <item name="android:textStyle">bold|italic</item>
+    </style>
+
+    <style name="LiftText.Value">
+        <item name="android:textSize">@dimen/lift_text_display</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+    </style>
+
+    <style name="LiftCard">
+        <item name="android:background">@drawable/bg_lift_card</item>
+        <item name="android:padding">@dimen/lift_gap_lg</item>
+    </style>
+
+    <style name="LiftButton.Primary" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="backgroundTint">@color/lift_acid</item>
+        <item name="android:textColor">@color/lift_on_acid</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">@dimen/lift_radius_lg</item>
+    </style>
+
+    <style name="LiftButton.Secondary" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeColor">@color/lift_line</item>
+        <item name="backgroundTint">@color/lift_surface</item>
+        <item name="android:textColor">@color/lift_text</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">@dimen/lift_radius_lg</item>
+    </style>
+
+    <style name="LiftInput">
+        <item name="android:background">@drawable/bg_lift_input</item>
+        <item name="android:minHeight">@dimen/lift_input_height</item>
+        <item name="android:paddingStart">@dimen/lift_gap_lg</item>
+        <item name="android:paddingEnd">@dimen/lift_gap_lg</item>
+        <item name="android:textColor">@color/lift_text</item>
+        <item name="android:textColorHint">@color/lift_text_dim</item>
+        <item name="android:textSize">@dimen/lift_text_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="LiftText.FieldLabel">
+        <item name="android:textSize">@dimen/lift_text_caption</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="LiftText.Note">
+        <item name="android:textColor">@color/lift_text_dim</item>
+        <item name="android:textSize">@dimen/lift_text_caption</item>
+    </style>
+
+    <style name="LiftText.Chip">
+        <item name="android:background">@drawable/bg_lift_chip</item>
+        <item name="android:textColor">@color/lift_on_acid</item>
+        <item name="android:textSize">@dimen/lift_text_caption</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:letterSpacing">0.14</item>
+        <item name="android:paddingStart">@dimen/lift_gap_md</item>
+        <item name="android:paddingEnd">@dimen/lift_gap_md</item>
+        <item name="android:paddingTop">@dimen/lift_gap_xs</item>
+        <item name="android:paddingBottom">@dimen/lift_gap_xs</item>
+    </style>
+
+    <style name="LiftButton.Segment" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="backgroundTint">@color/lift_segment_background</item>
+        <item name="strokeColor">@color/lift_line</item>
+        <item name="android:textColor">@color/lift_segment_text</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.06</item>
+    </style>
+
+    <style name="LiftButton.Text" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/lift_text_dim</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+</resources>

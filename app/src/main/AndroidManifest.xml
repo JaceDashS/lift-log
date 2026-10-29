@@ -17,14 +17,36 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".ui.HomeActivity"
+            android:exported="true"
+            android:theme="@style/Theme.LiftLog">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.SessionActivity"
+            android:exported="false"
+            android:theme="@style/Theme.LiftLog"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.RecordsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.LiftLog" />
+        <activity
+            android:name=".ui.ExerciseDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.LiftLog" />
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.LiftLog"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
         <activity
             android:name=".WorkoutActivity"
             android:exported="false" />

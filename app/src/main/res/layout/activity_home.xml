@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/lift_gutter">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/lift_mark_size"
+                android:layout_height="@dimen/lift_mark_size"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_launcher_foreground" />
+
+            <TextView
+                style="@style/LiftText.Headline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/lift_gap_sm"
+                android:text="@string/lift_wordmark" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/LiftCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lift_gap_lg"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/LiftText.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_last_session" />
+
+            <TextView
+                android:id="@+id/text_home_last_date"
+                style="@style/LiftText.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lift_gap_xs" />
+
+            <TextView
+                android:id="@+id/text_home_last_summary"
+                style="@style/LiftText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lift_gap_xs"
+                android:textColor="@color/lift_text_dim" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_home_start"
+            style="@style/LiftButton.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/lift_home_start_height"
+            android:layout_marginTop="@dimen/lift_gap_md"
+            android:text="@string/home_start_workout"
+            android:textSize="@dimen/lift_text_display"
+            app:icon="@drawable/ic_lift_arrow"
+            app:iconGravity="textEnd"
+            app:iconTint="@color/lift_on_acid" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lift_gap_md"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_home_records"
+                style="@style/LiftButton.Secondary"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/lift_tile_height"
+                android:layout_marginEnd="@dimen/lift_gap_sm"
+                android:layout_weight="1"
+                android:text="@string/home_records"
+                android:textSize="@dimen/lift_text_title" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_home_settings"
+                style="@style/LiftButton.Secondary"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/lift_tile_height"
+                android:layout_marginStart="@dimen/lift_gap_sm"
+                android:layout_weight="1"
+                android:text="@string/home_settings"
+                android:textSize="@dimen/lift_text_title" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/LiftText.Label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lift_gap_lg"
+            android:gravity="center"
+            android:text="@string/lift_preview_notice" />
+    </LinearLayout>
+</ScrollView>

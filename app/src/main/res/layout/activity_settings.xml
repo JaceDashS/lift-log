@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/lift_gutter">
+
+        <TextView
+            style="@style/LiftText.Headline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_title" />
+
+        <LinearLayout
+            style="@style/LiftCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lift_gap_lg"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/LiftText.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_chart" />
+
+            <TextView
+                style="@style/LiftText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lift_gap_sm"
+                android:text="@string/settings_chart_spacing" />
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lift_gap_sm"
+                app:checkedButton="@id/button_settings_per_session"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_settings_per_session"
+                    style="@style/LiftButton.Segment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/trend_per_session" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_settings_per_day"
+                    style="@style/LiftButton.Segment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/trend_per_day" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/LiftCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lift_gap_md"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/LiftText.Label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_test_mode" />
+
+                    <TextView
+                        style="@style/LiftText.Note"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/lift_gap_xs"
+                        android:text="@string/settings_test_mode_note" />
+                </LinearLayout>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_settings_test_mode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:thumbTint="@color/lift_switch_thumb"
+                    app:trackTint="@color/lift_switch_track" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/panel_settings_test_data"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/LiftText.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/lift_gap_lg"
+                    android:text="@string/test_add_title" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/lift_gap_md"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        style="@style/LiftInput"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/lift_gap_sm"
+                        android:layout_weight="1"
+                        android:hint="@string/test_date_hint"
+                        android:importantForAutofill="no"
+                        android:inputType="date" />
+
+                    <EditText
+                        style="@style/LiftInput"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/lift_gap_sm"
+                        android:layout_weight="1"
+                        android:hint="@string/session_exercise_hint"
+                        android:importantForAutofill="no"
+                        android:inputType="textNoSuggestions" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/lift_gap_sm"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        style="@style/LiftInput"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/lift_gap_xs"
+                        android:layout_weight="1"
+                        android:hint="@string/test_weight_hint"
+                        android:importantForAutofill="no"
+                        android:inputType="numberDecimal" />
+
+                    <EditText
+                        style="@style/LiftInput"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/lift_gap_xs"
+                        android:layout_marginEnd="@dimen/lift_gap_xs"
+                        android:layout_weight="1"
+                        android:hint="@string/test_reps_hint"
+                        android:importantForAutofill="no"
+                        android:inputType="number" />
+
+                    <EditText
+                        style="@style/LiftInput"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/lift_gap_xs"
+                        android:layout_weight="1"
+                        android:hint="@string/test_rest_hint"
+                        android:importantForAutofill="no"
+                        android:inputType="time" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/LiftButton.Primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/lift_input_height"
+                    android:layout_marginTop="@dimen/lift_gap_md"
+                    android:text="@string/test_add_button" />
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/LiftButton.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/lift_input_height"
+                    android:layout_marginTop="@dimen/lift_gap_sm"
+                    android:text="@string/test_fill_random" />
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/LiftButton.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/lift_gap_xs"
+                    android:text="@string/test_clear"
+                    android:textColor="@color/lift_down" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/row_settings_overlay_timer"
+            style="@style/LiftCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lift_gap_md"
+            android:background="@drawable/bg_lift_card_pressable"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/LiftText.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_overlay_timer" />
+
+                <TextView
+                    style="@style/LiftText.Note"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/lift_gap_xs"
+                    android:text="@string/settings_overlay_timer_note" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_lift_arrow"
+                app:tint="@color/lift_text_dim" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/LiftText.Label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lift_gap_lg"
+            android:gravity="center"
+            android:text="@string/lift_preview_notice" />
+    </LinearLayout>
+</ScrollView>

@@ -11,7 +11,7 @@ Kotlin paths below are relative to app/src/main/java/com/example/workouttimer. A
 
 | Module | Public interface |
 | --- | --- |
-| MainActivity.kt | onCreate binds launch, reset and log controls; onResume continues startup after overlay permission |
+| MainActivity.kt | Opened from the Settings overlay timer row; onCreate binds launch, reset and log controls; onResume continues startup after overlay permission |
 | WorkoutActivity.kt | onCreate initializes in-app editing; onDestroy releases resources |
 | OverlayService.kt | onCreate initializes service; onStartCommand handles ACTION_START_SERVICE, ACTION_END_SESSION, ACTION_START_TIMER, ACTION_RESET_SET and ACTION_ENABLE_EDIT_MODE; onBind returns null; onDestroy releases resources |
 | TouchAwareFrameLayout.kt | Constructor accepts Android view attributes; dispatchTouchEvent returns normal dispatch handling and calls onPostDispatchTouchEvent in finally |

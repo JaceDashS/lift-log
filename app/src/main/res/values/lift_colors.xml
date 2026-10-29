@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="lift_bg">#FF0B0D0F</color>
+    <color name="lift_surface">#FF15181C</color>
+    <color name="lift_surface_high">#FF1E2227</color>
+    <color name="lift_line">#FF2A2F36</color>
+    <color name="lift_acid">#FFD7FF3A</color>
+    <color name="lift_acid_dim">#33D7FF3A</color>
+    <color name="lift_on_acid">#FF0B0D0F</color>
+    <color name="lift_text">#FFF2F4F7</color>
+    <color name="lift_text_dim">#FF8A929C</color>
+    <color name="lift_down">#FFFF5A6E</color>
+</resources>

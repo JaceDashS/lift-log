@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lift_wordmark">LIFT LOG</string>
+    <string name="lift_preview_notice">UI preview · sample data</string>
+
+    <string name="home_last_session">Last session</string>
+    <string name="home_start_workout">START</string>
+    <string name="home_records">RECORDS</string>
+    <string name="home_settings">SETTINGS</string>
+
+    <string name="session_title">Session</string>
+    <string name="session_end">END</string>
+    <string name="session_state_rest">REST</string>
+    <string name="session_state_push">PUSH</string>
+    <string name="session_rest_caption">Rest time · runs while resting</string>
+    <string name="session_push_caption">Lifting · rest timer paused</string>
+    <string name="session_set_format">SET %1$d · %2$s</string>
+    <string name="session_input_title">Log this set</string>
+    <string name="session_exercise">Exercise</string>
+    <string name="session_exercise_hint">e.g. bcpr</string>
+    <string name="session_weight">Weight (kg)</string>
+    <string name="session_weight_note">kept</string>
+    <string name="session_reps">Reps</string>
+    <string name="session_reps_note">new every set</string>
+    <string name="session_button_push">PUSH</string>
+    <string name="session_button_rest">REST</string>
+    <string name="session_log_title">This session</string>
+    <string name="set_row_load_format">%1$s kg × %2$d</string>
+
+    <string name="records_title">RECORDS</string>
+    <string name="records_exercises">Exercises</string>
+    <string name="records_avg_reps">avg reps</string>
+    <string name="records_meta_format">Last %1$s · %2$d sessions</string>
+
+    <string name="detail_label">Exercise</string>
+    <string name="detail_last_done">Last done</string>
+    <string name="compare_title">Vs last time</string>
+    <string name="compare_col_set">Set</string>
+    <string name="compare_col_reps">Reps</string>
+    <string name="compare_col_rest">Rest</string>
+    <string name="compare_prev_format">/ %1$s</string>
+    <string name="compare_up_format">▲%1$s</string>
+    <string name="compare_down_format">▼%1$s</string>
+    <string name="compare_same">=</string>
+    <string name="duration_format">%1$d:%2$02d</string>
+
+    <string name="trend_title">Avg reps over time</string>
+    <string name="trend_per_session">Per session</string>
+    <string name="trend_per_day">Per day</string>
+
+    <string name="settings_title">SETTINGS</string>
+    <string name="settings_chart">Chart</string>
+    <string name="settings_chart_spacing">Default spacing for exercise charts</string>
+    <string name="settings_test_mode">Test mode</string>
+    <string name="settings_test_mode_note">Use made-up records. Real records stay untouched.</string>
+    <string name="test_add_title">Add a test record</string>
+    <string name="test_date_hint">2026-10-01</string>
+    <string name="test_weight_hint">kg</string>
+    <string name="test_reps_hint">reps</string>
+    <string name="test_rest_hint">rest</string>
+    <string name="test_add_button">ADD RECORD</string>
+    <string name="test_fill_random">FILL 30 DAYS RANDOMLY</string>
+    <string name="test_clear">Clear test records</string>
+    <string name="settings_overlay_timer">Overlay timer</string>
+    <string name="settings_overlay_timer_note">Current floating timer and layout editor</string>
+</resources>

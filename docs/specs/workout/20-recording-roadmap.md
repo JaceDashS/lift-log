@@ -16,7 +16,7 @@ rest일때는 시간이 흐르고 운동이 시작하면 시간이 멈춘다
 5. 테스트모드가 있어야함 내가 안에 임의의 데이터를 넣을수있어야함
 6. 앱을 처음키면 운동시작이랑 기록보기 설정 등이 있어야함
 ## Implementation Status
-These are future requirements and do not describe implemented functionality.
+These are future requirements and do not describe implemented functionality. Their screens exist as a UI preview with sample data: [App Screens](30-app-screens.md).
 
 ## Example
 - Input: A future record with exercise, weight, repetitions and rest duration.
