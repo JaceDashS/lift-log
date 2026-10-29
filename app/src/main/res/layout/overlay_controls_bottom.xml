@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/overlay_controls_bottom_panel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/controls_edit_toolbar"
+        android:layout_width="@dimen/ui_edit_toolbar_panel_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:background="@drawable/bg_overlay_panel"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/ui_spacing_sm"
+        android:paddingTop="@dimen/ui_spacing_xs"
+        android:paddingEnd="@dimen/ui_spacing_sm"
+        android:paddingBottom="@dimen/ui_spacing_xs"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_slider_alpha"
+            android:textColor="@android:color/white" />
+
+        <SeekBar
+            android:id="@+id/slider_controls_alpha"
+            android:layout_width="@dimen/ui_edit_toolbar_slider_width"
+            android:layout_height="wrap_content"
+            android:max="@integer/ui_alpha_slider_max"
+            android:progress="@integer/ui_alpha_slider_default_progress" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_edit_toolbar_section_spacing"
+            android:text="@string/edit_slider_button_font"
+            android:textColor="@android:color/white" />
+
+        <SeekBar
+            android:id="@+id/slider_controls_button_font_size"
+            android:layout_width="@dimen/ui_edit_toolbar_slider_width"
+            android:layout_height="wrap_content"
+            android:max="@integer/ui_alpha_slider_max"
+            android:progress="@integer/ui_alpha_slider_default_progress" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_edit_toolbar_section_spacing"
+            android:text="@string/edit_slider_button_size"
+            android:textColor="@android:color/white" />
+
+        <SeekBar
+            android:id="@+id/slider_controls_button_size"
+            android:layout_width="@dimen/ui_edit_toolbar_slider_width"
+            android:layout_height="wrap_content"
+            android:max="@integer/ui_alpha_slider_max"
+            android:progress="@integer/ui_alpha_slider_default_progress" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_edit_toolbar_section_spacing"
+            android:text="@string/edit_slider_set_font"
+            android:textColor="@android:color/white" />
+
+        <SeekBar
+            android:id="@+id/slider_controls_set_font_size"
+            android:layout_width="@dimen/ui_edit_toolbar_slider_width"
+            android:layout_height="wrap_content"
+            android:max="@integer/ui_alpha_slider_max"
+            android:progress="@integer/ui_alpha_slider_default_progress" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_spacing_sm"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_controls_done_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/ui_size_zero"
+                android:text="@string/done_edit"
+                android:textColor="@android:color/black" />
+
+            <Button
+                android:id="@+id/button_controls_reset_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ui_spacing_sm"
+                android:minWidth="@dimen/ui_size_zero"
+                android:text="@string/reset_layout"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_controls_edit"
+        android:layout_width="@dimen/ui_control_button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/ui_overlay_bottom_edit_margin_top_large"
+        android:text="@string/edit_mode" />
+
+    <Button
+        android:id="@+id/button_controls_end"
+        android:layout_width="@dimen/ui_control_button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/ui_overlay_bottom_end_margin_top_large"
+        android:text="@string/end" />
+
+</FrameLayout>
+

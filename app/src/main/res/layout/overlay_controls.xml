@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/overlay_controls_panel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <Button
+        android:id="@+id/button_controls_start"
+        android:layout_width="@dimen/ui_control_button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:text="@string/start" />
+
+    <Button
+        android:id="@+id/button_controls_reset_set"
+        android:layout_width="@dimen/ui_control_button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/ui_overlay_top_reset_margin_top"
+        android:text="@string/set_reset" />
+
+</FrameLayout>
+

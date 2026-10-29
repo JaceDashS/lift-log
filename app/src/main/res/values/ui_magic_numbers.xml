@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common spacing / size -->
+    <dimen name="ui_size_zero">0dp</dimen>
+    <dimen name="ui_guide_thickness">1dp</dimen>
+    <dimen name="ui_spacing_xs">4dp</dimen>
+    <dimen name="ui_spacing_sm">8dp</dimen>
+    <dimen name="ui_spacing_md">16dp</dimen>
+    <dimen name="ui_spacing_lg">24dp</dimen>
+
+    <!-- Main screen -->
+    <dimen name="ui_main_button_spacing">12dp</dimen>
+    <dimen name="ui_main_start_button_min_height">180dp</dimen>
+    <dimen name="ui_main_start_button_text_size">28sp</dimen>
+
+    <!-- Workout screen typography -->
+    <dimen name="ui_timer_text_size">84sp</dimen>
+    <dimen name="ui_timer_stroke_width">3dp</dimen>
+    <dimen name="ui_text_stroke_secondary">1.5dp</dimen>
+
+    <!-- Workout screen layout -->
+    <dimen name="ui_edit_toolbar_margin_top">120dp</dimen>
+    <dimen name="ui_alpha_slider_width">140dp</dimen>
+    <dimen name="ui_edit_toolbar_panel_width">280dp</dimen>
+    <dimen name="ui_edit_toolbar_slider_width">180dp</dimen>
+    <dimen name="ui_edit_toolbar_section_spacing">6dp</dimen>
+    <dimen name="ui_drag_handle_touch_size">36dp</dimen>
+    <dimen name="ui_control_button_width">70dp</dimen>
+    <dimen name="ui_set_count_margin_top">90dp</dimen>
+    <dimen name="ui_total_count_margin_top">130dp</dimen>
+    <dimen name="ui_start_button_margin_top">96dp</dimen>
+    <dimen name="ui_reset_button_margin_top">152dp</dimen>
+    <dimen name="ui_overlay_edit_button_margin_bottom">72dp</dimen>
+    <dimen name="ui_selection_handle_size">10dp</dimen>
+
+    <!-- Overlay controls -->
+    <dimen name="ui_overlay_top_reset_margin_top">56dp</dimen>
+    <dimen name="ui_overlay_bottom_slider_margin_top">54dp</dimen>
+    <dimen name="ui_overlay_bottom_edit_margin_top">110dp</dimen>
+    <dimen name="ui_overlay_bottom_end_margin_top">166dp</dimen>
+    <dimen name="ui_overlay_bottom_edit_margin_top_large">260dp</dimen>
+    <dimen name="ui_overlay_bottom_end_margin_top_large">316dp</dimen>
+
+    <!-- Drawables -->
+    <dimen name="ui_panel_corner_radius">14dp</dimen>
+    <dimen name="ui_selection_border_stroke">2dp</dimen>
+    <dimen name="ui_launcher_icon_size">108dp</dimen>
+
+    <!-- Slider -->
+    <integer name="ui_alpha_slider_default_progress">80</integer>
+    <integer name="ui_alpha_slider_max">100</integer>
+</resources>

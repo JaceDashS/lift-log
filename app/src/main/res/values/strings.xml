@@ -1,0 +1,37 @@
+﻿<resources>
+    <string name="app_name">WorkOutTimer</string>
+    <string name="start_workout">Start Workout</string>
+    <string name="dev_mode">Dev Mode</string>
+    <string name="reset_all_settings">Reset All Settings</string>
+    <string name="all_settings_reset">All settings have been reset.</string>
+
+    <string name="grant_overlay_permission">Grant Overlay Permission</string>
+    <string name="permission_granted">Permission Granted</string>
+    <string name="start_overlay">Start Overlay</string>
+    <string name="stop_overlay">End Session</string>
+    <string name="status_permission_needed">Overlay permission is required.</string>
+    <string name="status_ready">Permission granted. You can start overlay.</string>
+
+    <string name="drag_handle">Drag Handle</string>
+    <string name="start">Rest</string>
+    <string name="set_reset">Set Reset</string>
+    <string name="end">End</string>
+    <string name="edit_mode">Edit Mode</string>
+    <string name="done_edit">Done</string>
+    <string name="reset_layout">Reset</string>
+    <string name="clear_log">Clear Log</string>
+    <string name="edit_slider_alpha">Alpha</string>
+    <string name="edit_slider_button_font">Button Font Size</string>
+    <string name="edit_slider_button_size">Button Size</string>
+    <string name="edit_slider_set_font">Set Font Size</string>
+    <string name="edit_drag_hint">Drag Here</string>
+    <string name="set_count_format">Set: %1$d</string>
+    <string name="total_count_format">Total: %1$d</string>
+
+    <string name="notification_channel_name">Workout Timer Overlay</string>
+    <string name="notification_title">Workout Timer Running</string>
+    <string name="notification_text">Overlay timer is active.</string>
+    <string name="overlay_start_failed">Failed to start overlay service.</string>
+    <string name="overlay_draw_failed">Failed to draw overlay. Check permission.</string>
+</resources>
+

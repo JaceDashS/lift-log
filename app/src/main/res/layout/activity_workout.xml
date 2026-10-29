@@ -1,0 +1,264 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<com.example.workouttimer.TouchAwareFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/workout_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.example.workouttimer.StrokeTextView
+        android:id="@+id/text_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="monospace"
+        android:text="00:00"
+        android:textColor="#FFFFFFFF"
+        android:textSize="@dimen/ui_timer_text_size"
+        android:textStyle="bold"
+        app:strokeColor="#AA000000"
+        app:strokeWidth="@dimen/ui_timer_stroke_width" />
+
+    <LinearLayout
+        android:id="@+id/edit_toolbar"
+        android:layout_width="@dimen/ui_edit_toolbar_panel_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:layout_marginTop="@dimen/ui_edit_toolbar_margin_top"
+        android:background="@drawable/bg_overlay_panel"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/ui_spacing_sm"
+        android:paddingTop="@dimen/ui_spacing_xs"
+        android:paddingEnd="@dimen/ui_spacing_sm"
+        android:paddingBottom="@dimen/ui_spacing_xs"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_edit_toolbar_section_spacing"
+            android:text="@string/edit_slider_alpha"
+            android:textColor="@android:color/white" />
+
+        <SeekBar
+            android:id="@+id/slider_alpha"
+            android:layout_width="@dimen/ui_edit_toolbar_slider_width"
+            android:layout_height="wrap_content"
+            android:max="@integer/ui_alpha_slider_max"
+            android:progress="@integer/ui_alpha_slider_default_progress" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_edit_toolbar_section_spacing"
+            android:text="@string/edit_slider_button_font"
+            android:textColor="@android:color/white" />
+
+        <SeekBar
+            android:id="@+id/slider_button_font_size"
+            android:layout_width="@dimen/ui_edit_toolbar_slider_width"
+            android:layout_height="wrap_content"
+            android:max="@integer/ui_alpha_slider_max"
+            android:progress="@integer/ui_alpha_slider_default_progress" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_edit_toolbar_section_spacing"
+            android:text="@string/edit_slider_button_size"
+            android:textColor="@android:color/white" />
+
+        <SeekBar
+            android:id="@+id/slider_button_size"
+            android:layout_width="@dimen/ui_edit_toolbar_slider_width"
+            android:layout_height="wrap_content"
+            android:max="@integer/ui_alpha_slider_max"
+            android:progress="@integer/ui_alpha_slider_default_progress" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_edit_toolbar_section_spacing"
+            android:text="@string/edit_slider_set_font"
+            android:textColor="@android:color/white" />
+
+        <SeekBar
+            android:id="@+id/slider_set_font_size"
+            android:layout_width="@dimen/ui_edit_toolbar_slider_width"
+            android:layout_height="wrap_content"
+            android:max="@integer/ui_alpha_slider_max"
+            android:progress="@integer/ui_alpha_slider_default_progress" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_spacing_sm"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_done_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/ui_size_zero"
+                android:text="@string/done_edit"
+                android:textColor="@android:color/black" />
+
+            <Button
+                android:id="@+id/button_reset_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ui_spacing_sm"
+                android:minWidth="@dimen/ui_size_zero"
+                android:text="@string/reset_layout"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.example.workouttimer.StrokeTextView
+        android:id="@+id/text_set_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:layout_marginStart="@dimen/ui_spacing_md"
+        android:layout_marginTop="@dimen/ui_set_count_margin_top"
+        android:text="Set: 0"
+        android:textColor="#FFFFFFFF"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:strokeColor="#AA000000"
+        app:strokeWidth="@dimen/ui_text_stroke_secondary" />
+
+    <com.example.workouttimer.StrokeTextView
+        android:id="@+id/text_total_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:layout_marginStart="@dimen/ui_spacing_md"
+        android:layout_marginTop="@dimen/ui_total_count_margin_top"
+        android:text="Total: 0"
+        android:textColor="#FFFFFFFF"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:strokeColor="#AA000000"
+        app:strokeWidth="@dimen/ui_text_stroke_secondary" />
+
+    <Button
+        android:id="@+id/button_start"
+        android:layout_width="@dimen/ui_control_button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/ui_start_button_margin_top"
+        android:layout_marginEnd="@dimen/ui_spacing_md"
+        android:text="@string/start" />
+
+    <Button
+        android:id="@+id/button_reset_set"
+        android:layout_width="@dimen/ui_control_button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/ui_reset_button_margin_top"
+        android:layout_marginEnd="@dimen/ui_spacing_md"
+        android:text="@string/set_reset" />
+
+    <Button
+        android:id="@+id/button_edit"
+        android:layout_width="@dimen/ui_control_button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="@dimen/ui_overlay_edit_button_margin_bottom"
+        android:layout_marginEnd="@dimen/ui_spacing_md"
+        android:text="@string/edit_mode" />
+
+    <Button
+        android:id="@+id/button_end"
+        android:layout_width="@dimen/ui_control_button_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="@dimen/ui_spacing_md"
+        android:layout_marginEnd="@dimen/ui_spacing_md"
+        android:text="@string/end" />
+
+    <View
+        android:id="@+id/snap_guide_vertical"
+        android:layout_width="@dimen/ui_guide_thickness"
+        android:layout_height="match_parent"
+        android:background="#FF00FF"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/snap_guide_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ui_guide_thickness"
+        android:background="#FF00FF"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/selection_overlay"
+        android:layout_width="@dimen/ui_guide_thickness"
+        android:layout_height="@dimen/ui_guide_thickness"
+        android:visibility="gone">
+
+        <View
+            android:id="@+id/selection_border"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_selection_box" />
+
+        <View
+            android:id="@+id/handle_nw"
+            android:layout_width="@dimen/ui_selection_handle_size"
+            android:layout_height="@dimen/ui_selection_handle_size"
+            android:layout_gravity="top|start"
+            android:background="@drawable/bg_selection_handle" />
+
+        <View
+            android:id="@+id/handle_n"
+            android:layout_width="@dimen/ui_selection_handle_size"
+            android:layout_height="@dimen/ui_selection_handle_size"
+            android:layout_gravity="top|center_horizontal"
+            android:background="@drawable/bg_selection_handle" />
+
+        <View
+            android:id="@+id/handle_ne"
+            android:layout_width="@dimen/ui_selection_handle_size"
+            android:layout_height="@dimen/ui_selection_handle_size"
+            android:layout_gravity="top|end"
+            android:background="@drawable/bg_selection_handle" />
+
+        <View
+            android:id="@+id/handle_w"
+            android:layout_width="@dimen/ui_selection_handle_size"
+            android:layout_height="@dimen/ui_selection_handle_size"
+            android:layout_gravity="center_vertical|start"
+            android:background="@drawable/bg_selection_handle" />
+
+        <View
+            android:id="@+id/handle_e"
+            android:layout_width="@dimen/ui_selection_handle_size"
+            android:layout_height="@dimen/ui_selection_handle_size"
+            android:layout_gravity="center_vertical|end"
+            android:background="@drawable/bg_selection_handle" />
+
+        <View
+            android:id="@+id/handle_sw"
+            android:layout_width="@dimen/ui_selection_handle_size"
+            android:layout_height="@dimen/ui_selection_handle_size"
+            android:layout_gravity="bottom|start"
+            android:background="@drawable/bg_selection_handle" />
+
+        <View
+            android:id="@+id/handle_s"
+            android:layout_width="@dimen/ui_selection_handle_size"
+            android:layout_height="@dimen/ui_selection_handle_size"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@drawable/bg_selection_handle" />
+
+        <View
+            android:id="@+id/handle_se"
+            android:layout_width="@dimen/ui_selection_handle_size"
+            android:layout_height="@dimen/ui_selection_handle_size"
+            android:layout_gravity="bottom|end"
+            android:background="@drawable/bg_selection_handle" />
+
+    </FrameLayout>
+
+</com.example.workouttimer.TouchAwareFrameLayout>
+
