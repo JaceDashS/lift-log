@@ -1,5 +1,5 @@
 # App Screens
-The recording roadmap screens exist as a UI preview. They show fixed sample data; nothing is timed, recorded or stored yet. Recording behavior is still described only in the [Recording Roadmap](20-recording-roadmap.md).
+Session records, home summaries, exercise history, selectable graphs and set comparisons use persistent data. Settings saves graph spacing and test mode and manages isolated test records. Recording behavior is described in the [Recording Roadmap](20-recording-roadmap.md).
 
 ## Screen List
 | Screen | Roadmap item | Shows |
@@ -15,6 +15,8 @@ The recording roadmap screens exist as a UI preview. They show fixed sample data
 - Session screen: weight keeps its value between sets; reps start empty every set. Exercise names are free text such as bcpr.
 - Comparison rows show this session and the previous session for the same set number. Fewer reps or longer rest is marked red; more reps or shorter rest is marked acid.
 - Chart spacing defaults to one slot per session, where every slot has a dot. One slot per day leaves days without a session empty, while the line still joins the surrounding sessions.
+- Every logged workout can be selected by graph point or dropdown. Multiple workouts on one date remain separate and share the same day coordinate in day spacing. Missing comparison sets display a dash; no previous workout is identified explicitly.
+- Home and Records show empty states when no records exist; Home offers RESUME for an unfinished session.
 - Test mode records are kept apart from real records.
 - The existing overlay timer stays reachable from Settings until the Session screen takes over its function.
 - Screen text is English.
@@ -22,6 +24,6 @@ The recording roadmap screens exist as a UI preview. They show fixed sample data
 ## Example
 - Input: User opens the app.
 - Steps: Home appears; tap START.
-- Expected result: Session screen in REST state with sample timer 01:24, exercise bcpr, weight 60 and empty reps.
+- Expected result: Session screen resumes a stored draft or starts REST at zero with empty inputs.
 
 - [Design](../../design/workout/30-app-screens.md)

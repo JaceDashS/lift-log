@@ -1,6 +1,6 @@
 # Lift Log
 
-Android workout logging app. The launcher opens the Lift Log home screen: START, RECORDS and SETTINGS. These screens are a UI preview with sample data; see [App Screens](docs/specs/workout/30-app-screens.md).
+Android workout logging app. The launcher opens the Lift Log home screen: START, RECORDS and SETTINGS. Sessions, rest timing, exercise history, comparison charts and isolated test records are stored locally. See [App Screens](docs/specs/workout/30-app-screens.md).
 
 The existing overlay timer opens from SETTINGS > Overlay timer. It has two editing surfaces that must behave the same way:
 
@@ -250,7 +250,7 @@ gradlew.bat test
 ## Key Source Files
 
 - [HomeActivity.kt](app/src/main/java/com/example/workouttimer/ui/HomeActivity.kt)
-- [PreviewData.kt](app/src/main/java/com/example/workouttimer/ui/PreviewData.kt)
+- [WorkoutStore.kt](app/src/main/java/com/example/workouttimer/data/WorkoutStore.kt)
 - [MainActivity.kt](app/src/main/java/com/example/workouttimer/MainActivity.kt)
 - [WorkoutActivity.kt](app/src/main/java/com/example/workouttimer/WorkoutActivity.kt)
 - [OverlayService.kt](app/src/main/java/com/example/workouttimer/OverlayService.kt)

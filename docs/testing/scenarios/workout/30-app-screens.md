@@ -1,35 +1,37 @@
 # App Screen Scenarios
-UI preview checks. All values are sample data. Verified on the Pixel 7 API 34 emulator on 2026-10-30.
+Screen checks using persistent records. Use an emulator and synthetic data for recording verification.
+
+Verified on Pixel 7 API 34 on 2026-10-30: home empty state and RESUME, session transitions and persistence, test input and history lookup, graph selection and rotation, save and discard END paths, sample generation and deletion, dataset switch, persistent chart default and legacy timer entry. See [Recording Verification](20-recording-roadmap.md#verification) for test counts and limitations.
 
 ## Home Launch
 - Input: Fresh install.
 - Steps: Open Lift Log from the launcher.
-- Expected result: Home shows LIFT LOG, last session Tue, Oct 28, START, RECORDS and SETTINGS.
+- Expected result: Home shows LIFT LOG, No records yet, START, RECORDS and SETTINGS. A saved workout updates the summary; an active draft changes START to RESUME.
 
 ## Session Rest And Push
 - Input: Home screen.
 - Steps: Tap START, then PUSH, then REST.
-- Expected result: REST shows acid 01:24 and "Rest time · runs while resting"; PUSH shows grey 00:00 and "Lifting · rest timer paused". No timer counts.
+- Expected result: REST grows; PUSH freezes the preceding rest; REST requires valid inputs and saves one set.
 
 ## Session Inputs
 - Input: Session screen.
-- Steps: Read the input card.
-- Expected result: Exercise bcpr, weight 60 marked kept, reps empty marked new every set; sets 1 and 2 listed below.
+- Steps: Enter bcpr, 60 kg and 10 reps during PUSH, then tap REST.
+- Expected result: Exercise and weight retained, reps cleared, stored set listed below.
 
 ## Set Comparison
-- Input: Records screen.
-- Steps: Tap bcpr.
-- Expected result: Set 2 shows 9 / 10 with a red down 1 and rest 1:52 with a red up 0:22; set 4 shows 8 / 7 with an acid up 1 and rest 2:00 with an acid down 0:10.
+- Input: Stored bcpr workouts with matching second sets: current 9 reps and 112 seconds rest, previous 10 reps and 90 seconds rest.
+- Steps: Tap bcpr and select the latest workout in the dropdown or graph.
+- Expected result: Set 2 shows both loads, red down 1 for reps and red up 0:22 for rest; prior rest 1:30 is visible. Unmatched sets show a dash and no delta.
 
 ## Chart Spacing
-- Input: bcpr detail.
+- Input: bcpr detail with workouts seven days apart.
 - Steps: Tap Per day, then Per session.
-- Expected result: Per session spaces eight dots evenly. Per day spaces them by date with day ticks; the line still joins sessions across empty days.
+- Expected result: Per session spaces dots evenly. Per day spaces them by date with day ticks; the line spans the six empty days. Empty history shows an empty state and one workout shows one dot. Workout selection survives rotation.
 
 ## Test Mode Form
 - Input: Settings screen.
-- Steps: Turn on Test mode.
-- Expected result: The test record form, ADD RECORD, FILL 30 DAYS RANDOMLY and Clear test records appear; turning it off hides them. Buttons do nothing yet.
+- Steps: Turn on Test mode, enter a date, exercise, kg, reps and rest, then ADD RECORD. Generate samples, cancel deletion, then confirm deletion.
+- Expected result: Test mode and chart default persist. Valid records appear only in test history. Cancel keeps records; confirmed deletion removes only test records. Invalid fields do not save. Turning test mode off restores real history and its unfinished draft.
 
 ## Overlay Timer Entry
 - Input: Settings screen.

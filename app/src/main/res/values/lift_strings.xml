@@ -1,9 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="lift_wordmark">LIFT LOG</string>
-    <string name="lift_preview_notice">UI preview · sample data</string>
+    <string name="lift_preview_notice">Every set counts.</string>
+    <string name="error_exercise">Enter an exercise name (1–100 characters).</string>
+    <string name="error_weight">Enter a weight from 0 to 10000 kg.</string>
+    <string name="error_reps">Enter repetitions from 1 to 10000.</string>
+    <string name="error_storage">Could not save. Your input is still here; please try again.</string>
+    <string name="end_title">End workout?</string>
+    <string name="end_message">Save this set, or discard only this unfinished set. Completed sets are kept.</string>
+    <string name="save_and_end">Save and end</string>
+    <string name="discard_and_end">Discard set and end</string>
+    <string name="test_suffix">\u0020· TEST</string>
 
     <string name="home_last_session">Last session</string>
+    <string name="home_resume">RESUME</string>
+    <string name="home_empty_hint">Start your first workout.</string>
+    <string name="home_summary_format">%1$s · %2$d sets</string>
+    <string name="empty_records">No records yet</string>
+    <string name="no_previous">No previous workout</string>
+    <string name="history_select">Select a workout to compare</string>
+    <string name="history_item">%1$s · session %2$d</string>
+    <string name="history_compare">%1$s vs %2$s</string>
+    <string name="history_load">%1$d × %2$s kg</string>
+    <string name="missing_value">—</string>
     <string name="home_start_workout">START</string>
     <string name="home_records">RECORDS</string>
     <string name="home_settings">SETTINGS</string>
@@ -57,7 +76,13 @@
     <string name="test_date_hint">2026-10-01</string>
     <string name="test_weight_hint">kg</string>
     <string name="test_reps_hint">reps</string>
-    <string name="test_rest_hint">rest</string>
+    <string name="test_rest_hint">m:ss</string>
+    <string name="error_date">Use a valid YYYY-MM-DD date (1900–2100).</string>
+    <string name="error_rest">Enter seconds or m:ss, up to 24 hours.</string>
+    <string name="test_saved">Test records updated.</string>
+    <string name="error_test_storage">Could not update test records. Please try again.</string>
+    <string name="clear_test_title">Clear test records?</string>
+    <string name="clear_test_message">All test workouts and the active test draft will be removed. Real workouts are kept.</string>
     <string name="test_add_button">ADD RECORD</string>
     <string name="test_fill_random">FILL 30 DAYS RANDOMLY</string>
     <string name="test_clear">Clear test records</string>

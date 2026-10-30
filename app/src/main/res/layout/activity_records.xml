@@ -11,6 +11,7 @@
         android:padding="@dimen/lift_gutter">
 
         <TextView
+            android:id="@+id/text_records_title"
             style="@style/LiftText.Headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -15,7 +15,7 @@ The application product name, supplied by the app_name string resource.
 
 ## Session
 - Definition: One workout from START to END, made of sets.
-- Code: `SessionActivity`
+- Code: `SessionActivity`, `WorkoutSession`, `SessionDraft`
 - Avoid: "workout" for a single set
 
 ## REST and PUSH
@@ -25,7 +25,7 @@ The application product name, supplied by the app_name string resource.
 
 ## Exercise Name
 - Definition: Free text the user types for an exercise, such as bcpr for bench press.
-- Code: `input_session_exercise`, `PreviewData.ExerciseSummary.name`
+- Code: `input_session_exercise`, `WorkoutSet.exercise`
 
 ## Chart Spacing
 - Definition: How the exercise chart lays out its x axis: one slot per session (default) or one slot per day.
@@ -35,6 +35,6 @@ The application product name, supplied by the app_name string resource.
 - Definition: A mode that works with made-up records kept apart from real records.
 - Code: `switch_settings_test_mode`
 
-## Preview Data
-- Definition: Fixed sample content shown by the UI preview screens until recording is implemented.
-- Code: `PreviewData`
+## Preceding Rest
+- Definition: The pause before a completed set, frozen by PUSH and saved by REST.
+- Code: `WorkoutSet.restMillis`, `SessionDraft.frozenRestMillis`

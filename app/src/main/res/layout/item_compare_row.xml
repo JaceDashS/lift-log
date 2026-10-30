@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/lift_compare_row_height"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/lift_compare_row_height"
+    android:paddingTop="@dimen/lift_gap_sm"
+    android:paddingBottom="@dimen/lift_gap_sm"
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
@@ -17,11 +20,11 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/text_compare_reps"
-            style="@style/LiftText.Title"
+            style="@style/LiftText.FieldLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFeatureSettings="tnum" />
@@ -31,7 +34,6 @@
             style="@style/LiftText.Note"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/lift_gap_xs"
             android:fontFeatureSettings="tnum" />
 
         <TextView
@@ -39,7 +41,6 @@
             style="@style/LiftText.FieldLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/lift_gap_sm"
             android:fontFeatureSettings="tnum" />
     </LinearLayout>
 
@@ -48,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center_vertical|end"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/text_compare_rest"
@@ -58,11 +59,16 @@
             android:fontFeatureSettings="tnum" />
 
         <TextView
+            android:id="@+id/text_compare_rest_prev"
+            style="@style/LiftText.Note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
             android:id="@+id/text_compare_rest_delta"
             style="@style/LiftText.FieldLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/lift_gap_sm"
             android:fontFeatureSettings="tnum" />
     </LinearLayout>
 </LinearLayout>

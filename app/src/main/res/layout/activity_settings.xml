@@ -38,6 +38,7 @@
                 android:text="@string/settings_chart_spacing" />
 
             <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_settings_spacing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/lift_gap_sm"
@@ -124,6 +125,7 @@
                     android:orientation="horizontal">
 
                     <EditText
+                        android:id="@+id/input_test_date"
                         style="@style/LiftInput"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -134,6 +136,7 @@
                         android:inputType="date" />
 
                     <EditText
+                        android:id="@+id/input_test_exercise"
                         style="@style/LiftInput"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -151,6 +154,7 @@
                     android:orientation="horizontal">
 
                     <EditText
+                        android:id="@+id/input_test_weight"
                         style="@style/LiftInput"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -161,6 +165,7 @@
                         android:inputType="numberDecimal" />
 
                     <EditText
+                        android:id="@+id/input_test_reps"
                         style="@style/LiftInput"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -172,6 +177,7 @@
                         android:inputType="number" />
 
                     <EditText
+                        android:id="@+id/input_test_rest"
                         style="@style/LiftInput"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -183,6 +189,7 @@
                 </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_test_add"
                     style="@style/LiftButton.Primary"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/lift_input_height"
@@ -190,6 +197,7 @@
                     android:text="@string/test_add_button" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_test_fill"
                     style="@style/LiftButton.Secondary"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/lift_input_height"
@@ -197,6 +205,7 @@
                     android:text="@string/test_fill_random" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_test_clear"
                     style="@style/LiftButton.Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

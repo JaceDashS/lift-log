@@ -136,6 +136,12 @@
                 android:layout_height="wrap_content"
                 android:text="@string/compare_title" />
 
+            <Spinner
+                android:id="@+id/spinner_history_session"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:contentDescription="@string/history_select" />
+
             <TextView
                 android:id="@+id/text_compare_sessions"
                 style="@style/LiftText.Note"
