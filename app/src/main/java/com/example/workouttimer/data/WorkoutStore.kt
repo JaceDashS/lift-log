@@ -75,9 +75,9 @@ class WorkoutStore internal constructor(context: Context, databaseName: String =
         }, SQLiteDatabase.CONFLICT_REPLACE).also { check(it != -1L) }
     }
 
-    /** Saves exactly one PUSH set, clears repetitions, and starts REST atomically. */
+    /** Saves exactly one PUSH set and starts REST atomically; repetitions clear unless [keepReps]. */
     @Synchronized
-    fun completeSet(draft: SessionDraft, test: Boolean = testMode): SessionDraft {
+    fun completeSet(draft: SessionDraft, test: Boolean = testMode, keepReps: Boolean = false): SessionDraft {
         require(draft.pushing && SetInput.valid(draft.exercise, draft.weight, draft.reps))
         val db = writableDatabase
         db.beginTransaction()
@@ -86,6 +86,7 @@ class WorkoutStore internal constructor(context: Context, databaseName: String =
             insertSet(db, WorkoutSet(sessionId = draft.sessionId, exercise = draft.exercise.trim(),
                 weightKg = draft.weight.toDouble(), reps = draft.reps.toInt(), restMillis = draft.frozenRestMillis))
             val next = draft.rest(System.currentTimeMillis(), SystemClock.elapsedRealtime(), bootCount())
+                .let { if (keepReps) it.copy(reps = draft.reps) else it }
             saveDraft(next, test)
             db.setTransactionSuccessful()
             return next

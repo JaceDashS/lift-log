@@ -14,6 +14,7 @@
 
     <string name="drag_handle">Drag Handle</string>
     <string name="start">Rest</string>
+    <string name="push">Push</string>
     <string name="set_reset">Set Reset</string>
     <string name="end">End</string>
     <string name="edit_mode">Edit Mode</string>
@@ -27,6 +28,8 @@
     <string name="edit_drag_hint">Drag Here</string>
     <string name="set_count_format">Set: %1$d</string>
     <string name="total_count_format">Total: %1$d</string>
+    <string name="total_time_format">Time: %1$s</string>
+    <string name="notification_set_format">Set %1$d · %2$s</string>
 
     <string name="notification_channel_name">Workout Timer Overlay</string>
     <string name="notification_title">Workout Timer Running</string>

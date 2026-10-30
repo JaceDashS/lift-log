@@ -13,7 +13,7 @@ Source paths below are relative to app/src/main/java/com/example/workouttimer.
 | data/WorkoutStore.kt get | Application context | One SQLiteOpenHelper repository per process |
 | WorkoutStore start and active | Real or test dataset | Existing draft, or new workout and REST draft |
 | WorkoutStore saveDraft | Draft and dataset | Persistent inputs and clock snapshot |
-| WorkoutStore completeSet | Valid PUSH draft and dataset | Atomic set insertion and next REST draft; rejects stale draft to prevent duplicate saves |
+| WorkoutStore completeSet | Valid PUSH draft, dataset and keepReps | Atomic set insertion and next REST draft; reps clear unless keepReps, which the overlay uses; rejects stale draft to prevent duplicate saves |
 | WorkoutStore end | Dataset | Completed workout with saved sets retained; empty workout removed |
 | WorkoutStore sessions | Dataset | Workouts and their sets, ordered by date and start |
 | WorkoutStore bootCount | Device settings | Current boot count for monotonic timer recovery |
@@ -21,7 +21,8 @@ Source paths below are relative to app/src/main/java/com/example/workouttimer.
 | WorkoutStore addTestSet | Local date, exercise, kg, repetitions, rest milliseconds | Test set appended to the finished test workout on that date |
 | WorkoutStore fillTestData | None | Thirty day range of example records in test storage only |
 | WorkoutStore clearTestData | Confirmed UI request | Deletes test drafts, workouts and sets only |
-| ui/SessionActivity.kt | Launcher intent and persisted draft | REST and PUSH controls, validated save, resumable inputs and END handling |
+| OverlayService.kt | Persisted draft set from Home | Push and Rest toggle, set saving with the chosen values, total workout time and END handling over other apps |
+| ui/SessionActivity.kt | Persisted draft | Full-screen REST and PUSH controls; no longer opened from Home |
 | ui/SetRows.kt bindSetRows | WorkoutSet list | Rows numbered separately for each exercise |
 | ui/RecordFormat.kt duration and decimal | Milliseconds or decimal value | Localized compact display strings |
 

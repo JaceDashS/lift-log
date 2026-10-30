@@ -1,5 +1,5 @@
 # Data Flow
-SessionActivity persists draft inputs and REST or PUSH state through WorkoutStore. REST saves a completed set and next draft atomically in SQLite. A dataset flag separates real and test workouts. Monotonic elapsed time tracks rest across backgrounding; boot count enables a wall time fallback after reboot.
+HomeActivity persists the exercise, weight and reps chosen before START into the draft. OverlayService persists REST or PUSH state through WorkoutStore; REST saves a completed set and next draft atomically in SQLite, keeping the chosen reps. A dataset flag separates real and test workouts. Monotonic elapsed time tracks rest across backgrounding; boot count enables a wall time fallback after reboot.
 
 Home and Records summarize the selected dataset. ExerciseDetail filters sets by exact exercise name and sorts workouts chronologically, then supplies per workout mean repetitions and local day offsets to TrendChartView. A graph tap or dropdown selection chooses a workout and compares its sets with the preceding workout. Settings persists graph spacing and test mode, and writes or deletes only test records.
 

@@ -54,7 +54,7 @@
 - Android: Seven WorkoutStoreInstrumentedTest cases passed against unique temporary databases.
 - Screen checks: Manual test record insertion and lookup, validation errors, PUSH timer freeze, END cancellation, force stop and relaunch recovery, REST save with repetitions cleared, Back and RESUME, normal END, save and END, discard and END, graph point selection, selected workout restored after rotation, sample generation, cancel and confirm test deletion, real dataset isolation, saved chart default, and legacy timer entry passed through UI automation.
 - Initial verification boundaries: Reboot and wall clock changes were verified with clock inputs in JVM tests, not a physical device reboot. The initial implementation verification used only the emulator. The legacy overlay itself was not revalidated.
-- Static check: lintDebug reports three preexisting errors in unchanged OverlayService.kt: NotificationPermission, WrongConstant and ForegroundServiceType. APK assembly succeeds independently.
+- Static check: the ForegroundServiceType error is fixed; OverlayService now declares the specialUse type. Without it, START crashed with MissingForegroundServiceTypeException on API 34. lintDebug still reports two older errors in OverlayService.kt, NotificationPermission and WrongConstant; APK assembly succeeds independently.
 
 ## Physical Phone Installation
 - Input: User requests installation on the actual phone with mock records.

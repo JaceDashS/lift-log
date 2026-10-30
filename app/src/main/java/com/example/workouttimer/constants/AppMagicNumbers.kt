@@ -14,6 +14,7 @@ object AppMagicNumbers {
         const val FLOAT_ZERO = 0f
         const val FLOAT_ONE = 1f
         const val FLOAT_TWO = 2f
+        const val LONG_ZERO = 0L
         const val LONG_MAX = Long.MAX_VALUE
     }
 
@@ -26,6 +27,7 @@ object AppMagicNumbers {
 
     object Timer {
         const val TICK_MS = 1000L
+        const val DISPLAY_TICK_MS = 200L
         const val SECONDS_PER_MINUTE = 60
         const val START_COUNT_INCREMENT = 1
     }

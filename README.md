@@ -1,8 +1,8 @@
 # Lift Log
 
-Android workout logging app. The launcher opens the Lift Log home screen: START, RECORDS and SETTINGS. Sessions, rest timing, exercise history, comparison charts and isolated test records are stored locally. See [App Screens](docs/specs/workout/30-app-screens.md).
+Android workout logging app. Its core feature is a semi-transparent workout overlay: START floats the rest timer over any app, so the screen behind stays usable while the timer is visible. The launcher opens the Lift Log home screen, where exercise, weight and reps are chosen before START, plus RECORDS, LAYOUT and SETTINGS. Sessions, rest timing, exercise history, comparison charts and isolated test records are stored locally. See [App Screens](docs/specs/workout/30-app-screens.md).
 
-The existing overlay timer opens from SETTINGS > Overlay timer. It has two editing surfaces that must behave the same way:
+The overlay layout has two editing surfaces that must behave the same way:
 
 - `Dev Mode`: activity-based editing screen
 - `Overlay Mode`: system overlay editing screen
@@ -19,12 +19,11 @@ This README is the project-level reference for app purpose, edit-mode behavior, 
 - Compile SDK: `35`
 - Build: Gradle Android application
 
-## Overlay Timer Screen
+## Overlay Tools Screen
 
-Opened from SETTINGS > Overlay timer. It exposes these actions:
+Opened from SETTINGS > Overlay tools. Workouts start from Home START, so `Start Workout` is hidden here. It exposes these actions:
 
-- `Start Workout`: starts overlay mode
-- `Dev Mode`: opens the in-app editing screen
+- `Dev Mode`: opens the in-app editing screen, also reachable from Home LAYOUT
 - `Reset All Settings`: clears saved layout and related preferences
 - `Clear Log`: deletes the selection debug log file
 
@@ -54,11 +53,13 @@ Overlay mode has two distinct states.
 - Touches on the main overlay pass through to the app behind it.
 - Touchable overlay buttons remain available at the same visual positions for overlay control.
 - Notification actions are also available for overlay control.
-- Available controls are `Start`, `Reset`, `Edit`, and `End`.
+- The overlay shows the rest timer in the center, `Set`, total workout `Time`, a `Push`/`Rest` button and `End`.
+- `Push` freezes the rest timer; `Rest` saves the set with the values chosen on Home and restarts the timer.
+- Layout editing happens before START through Home LAYOUT, so `Reset` and `Edit` are not shown in the overlay.
 
 ### Overlay Edit State
 
-- Entered through the overlay `Edit` button or the notification `Edit` action.
+- Not entered during a workout; the same rules apply in Dev Mode, opened from Home LAYOUT before START.
 - The full-screen overlay becomes touchable.
 - Selection, deselection, move, resize, rotate, and edit-panel interaction are enabled.
 - Leaving edit mode returns the overlay to touch-through behavior.

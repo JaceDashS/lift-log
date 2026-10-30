@@ -39,7 +39,7 @@ The same messages are also emitted to Logcat with tag:
 
 ## Clear Log Button
 
-`Clear Log` is available on the overlay timer screen (SETTINGS > Overlay timer) before entering developer mode.
+`Clear Log` is available on the overlay tools screen (SETTINGS > Overlay tools) before entering developer mode.
 
 Button order:
 

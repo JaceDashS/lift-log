@@ -15,7 +15,7 @@ The application product name, supplied by the app_name string resource.
 
 ## Session
 - Definition: One workout from START to END, made of sets.
-- Code: `SessionActivity`, `WorkoutSession`, `SessionDraft`
+- Code: `OverlayService`, `WorkoutSession`, `SessionDraft`
 - Avoid: "workout" for a single set
 
 ## REST and PUSH

@@ -61,6 +61,97 @@
                 android:textColor="@color/lift_text_dim" />
         </LinearLayout>
 
+        <LinearLayout
+            style="@style/LiftCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lift_gap_md"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/LiftText.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_setup_title" />
+
+            <TextView
+                style="@style/LiftText.FieldLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lift_gap_md"
+                android:text="@string/session_exercise" />
+
+            <EditText
+                android:id="@+id/input_home_exercise"
+                style="@style/LiftInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lift_gap_xs"
+                android:hint="@string/session_exercise_hint"
+                android:importantForAutofill="no"
+                android:inputType="textNoSuggestions" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lift_gap_md"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/lift_gap_sm"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/LiftText.FieldLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/session_weight" />
+
+                    <EditText
+                        android:id="@+id/input_home_weight"
+                        style="@style/LiftInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/lift_gap_xs"
+                        android:importantForAutofill="no"
+                        android:inputType="numberDecimal" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/lift_gap_sm"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/LiftText.FieldLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/session_reps" />
+
+                    <EditText
+                        android:id="@+id/input_home_reps"
+                        style="@style/LiftInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/lift_gap_xs"
+                        android:importantForAutofill="no"
+                        android:inputType="number" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                style="@style/LiftText.Note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lift_gap_xs"
+                android:text="@string/home_setup_note" />
+        </LinearLayout>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_home_start"
             style="@style/LiftButton.Primary"
@@ -77,6 +168,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/lift_gap_md"
+            android:baselineAligned="false"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
@@ -86,8 +178,25 @@
                 android:layout_height="@dimen/lift_tile_height"
                 android:layout_marginEnd="@dimen/lift_gap_sm"
                 android:layout_weight="1"
+                android:maxLines="1"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
                 android:text="@string/home_records"
-                android:textSize="@dimen/lift_text_title" />
+                android:textSize="@dimen/lift_text_body" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_home_layout"
+                style="@style/LiftButton.Secondary"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/lift_tile_height"
+                android:layout_marginStart="@dimen/lift_gap_sm"
+                android:layout_marginEnd="@dimen/lift_gap_sm"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:text="@string/home_layout"
+                android:textSize="@dimen/lift_text_body" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_home_settings"
@@ -96,8 +205,11 @@
                 android:layout_height="@dimen/lift_tile_height"
                 android:layout_marginStart="@dimen/lift_gap_sm"
                 android:layout_weight="1"
+                android:maxLines="1"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
                 android:text="@string/home_settings"
-                android:textSize="@dimen/lift_text_title" />
+                android:textSize="@dimen/lift_text_body" />
         </LinearLayout>
 
         <TextView

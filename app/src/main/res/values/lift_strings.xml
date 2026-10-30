@@ -26,6 +26,10 @@
     <string name="home_start_workout">START</string>
     <string name="home_records">RECORDS</string>
     <string name="home_settings">SETTINGS</string>
+    <string name="home_layout">LAYOUT</string>
+    <string name="home_setup_title">Before START</string>
+    <string name="home_setup_note">REST saves each set with these values.</string>
+    <string name="home_overlay_permission">Allow display over other apps so the timer can float over your screen.</string>
 
     <string name="session_title">Session</string>
     <string name="session_end">END</string>
@@ -86,6 +90,6 @@
     <string name="test_add_button">ADD RECORD</string>
     <string name="test_fill_random">FILL 30 DAYS RANDOMLY</string>
     <string name="test_clear">Clear test records</string>
-    <string name="settings_overlay_timer">Overlay timer</string>
-    <string name="settings_overlay_timer_note">Current floating timer and layout editor</string>
+    <string name="settings_overlay_timer">Overlay tools</string>
+    <string name="settings_overlay_timer_note">Layout editor, layout reset and debug log</string>
 </resources>

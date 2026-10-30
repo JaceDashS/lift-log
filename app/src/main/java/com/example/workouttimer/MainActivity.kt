@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -29,9 +30,8 @@ class MainActivity : AppCompatActivity() {
         devModeButton = findViewById(R.id.button_dev_mode)
         resetAllSettingsButton = findViewById(R.id.button_reset_all_settings)
         clearLogButton = findViewById(R.id.button_clear_log)
-        startWorkoutButton.setOnClickListener {
-            ensureOverlayAndStart()
-        }
+        // Home START now launches the recorded overlay, so this unrecorded entry stays hidden.
+        startWorkoutButton.visibility = View.GONE
         devModeButton.setOnClickListener {
             startDevMode()
         }
