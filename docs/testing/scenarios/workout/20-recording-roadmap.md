@@ -53,5 +53,12 @@
 - JVM: Five WorkoutTest cases passed.
 - Android: Seven WorkoutStoreInstrumentedTest cases passed against unique temporary databases.
 - Screen checks: Manual test record insertion and lookup, validation errors, PUSH timer freeze, END cancellation, force stop and relaunch recovery, REST save with repetitions cleared, Back and RESUME, normal END, save and END, discard and END, graph point selection, selected workout restored after rotation, sample generation, cancel and confirm test deletion, real dataset isolation, saved chart default, and legacy timer entry passed through UI automation.
-- Boundaries: Reboot and wall clock changes were verified with clock inputs in JVM tests, not a physical device reboot. No physical phone was installed or operated. The legacy overlay itself was not revalidated.
+- Initial verification boundaries: Reboot and wall clock changes were verified with clock inputs in JVM tests, not a physical device reboot. The initial implementation verification used only the emulator. The legacy overlay itself was not revalidated.
 - Static check: lintDebug reports three preexisting errors in unchanged OverlayService.kt: NotificationPermission, WrongConstant and ForegroundServiceType. APK assembly succeeds independently.
+
+## Physical Phone Installation
+- Input: User requests installation on the actual phone with mock records.
+- Steps: Identify Galaxy Note20 running Android 13, install the debug APK, enable Test mode, generate thirty day sample data, open Records and bcpr detail.
+- Expected result: App is installed on the physical phone; isolated test records appear in history and comparison screens.
+- Verified: 2026-10-30. Installation succeeded. Test storage contains 10 workouts and 90 sets across bcpr, dl and sqt. Records shows 10 sessions for each exercise; bcpr detail shows the latest and previous workout and three set comparison rows. Test mode remains enabled. The existing real draft and real records were retained.
+- Display boundary: Link to Windows hosted the app on a secondary display of the physical phone. Inputs were directed to that app display; the built in screen was showing the sharing screen. This verifies execution on physical hardware, without claiming a built in screen screenshot of the app.
