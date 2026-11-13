@@ -38,3 +38,8 @@ The application product name, supplied by the app_name string resource.
 ## Preceding Rest
 - Definition: The pause before a completed set, frozen by PUSH and saved by REST.
 - Code: `WorkoutSet.restMillis`, `SessionDraft.frozenRestMillis`
+
+## Release Signing Key
+- Definition: The dedicated private key used to sign installable Lift Log release APKs and their future updates.
+- Notes: Separate from automatically generated debug keys; the key and password require durable private backups.
+- [Release Guide](guides/30-release.md)

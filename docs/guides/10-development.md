@@ -14,3 +14,4 @@ The public repository is https://github.com/JaceDashS/lift-log. The existing Wor
 
 - [Testing](../testing/10-strategy.md)
 - [Architecture](../architecture/10-overview.md)
+- [Release](30-release.md) — Signed production APK workflow
