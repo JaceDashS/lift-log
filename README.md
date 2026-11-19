@@ -1,5 +1,7 @@
 # Lift Log
 
+[Product overview and workout example](https://jace-s.com/en/apps/lift-log/)
+
 Android workout logging app. Its core feature is a semi-transparent workout overlay: START floats the rest timer over any app, so the screen behind stays usable while the timer is visible. The launcher opens the Lift Log home screen, where exercise, weight and reps are chosen before START, plus RECORDS, LAYOUT and SETTINGS. Sessions, rest timing, exercise history, comparison charts and isolated test records are stored locally. See [App Screens](docs/specs/workout/30-app-screens.md).
 
 The overlay layout has two editing surfaces that must behave the same way:
