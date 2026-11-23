@@ -83,6 +83,7 @@ struct ExerciseListView: View {
     var selecting: ((String?) -> Void)?
     var selected: String?
     @State private var adding = false
+    @State private var showingFeedback = false
     @State private var newExercise = ""
 
     var body: some View {
@@ -111,8 +112,8 @@ struct ExerciseListView: View {
             } label: { Label("Add exercise", systemImage: "plus") }
             if selecting == nil {
                 Section("Lift Log") {
-                    NavigationLink("About Lift Log") { AboutLiftLogView() }
-                    Link("Feedback", destination: URL(string: "https://jace-s.com/feedback/8")!)
+                    Link("About", destination: URL(string: "https://jace-s.com/about")!)
+                    Button("Feedback") { showingFeedback = true }
                 }
             }
             if let error = store.storageError {
@@ -122,6 +123,7 @@ struct ExerciseListView: View {
         .scrollContentBackground(.hidden)
         .background(LiftTheme.background.ignoresSafeArea())
         .navigationTitle(selecting == nil ? "Settings" : "Choose exercise")
+        .sheet(isPresented: $showingFeedback) { FeedbackSheet() }
         .alert("Add exercise", isPresented: $adding) {
             TextField("Exercise name", text: $newExercise)
                 .textInputAutocapitalization(.words)
@@ -148,17 +150,89 @@ struct ExerciseListView: View {
     }
 }
 
-private struct AboutLiftLogView: View {
+private struct FeedbackSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var content = ""
+    @State private var password = ""
+    @State private var sending = false
+    @State private var sent = false
+    @State private var errorMessage: LocalizedStringKey?
+
+    private var trimmedContent: String { content.trimmingCharacters(in: .whitespacesAndNewlines) }
+    private var canSend: Bool {
+        !sending && !trimmedContent.isEmpty && !password.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
     var body: some View {
-        List {
-            if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
-                LabeledContent("Version", value: version)
+        NavigationStack {
+            Form {
+                if sent {
+                    Text("Thank you. Your feedback has been posted.")
+                } else {
+                    Text("Your feedback will appear publicly on jace-s.com under Lift Log.")
+                    TextField("Your feedback", text: $content, axis: .vertical)
+                        .lineLimit(3...8)
+                        .disabled(sending)
+                    Section("Password for editing or deleting this feedback") {
+                        SecureField("Feedback password", text: $password).disabled(sending)
+                    }
+                    if sending {
+                        ProgressView("Sending…")
+                    }
+                    if let errorMessage {
+                        Text(errorMessage).foregroundStyle(.red)
+                    }
+                }
             }
-            Text("Lift Log records workout sets on this device. Developed by JaceDashS.")
-            Link("About the developer", destination: URL(string: "https://jace-s.com/about")!)
+            .navigationTitle("Feedback")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(sent ? "Done" : "Cancel") { dismiss() }.disabled(sending)
+                }
+                if !sent {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Send", action: send).disabled(!canSend)
+                    }
+                }
+            }
         }
-        .scrollContentBackground(.hidden)
-        .background(LiftTheme.background.ignoresSafeArea())
-        .navigationTitle("About Lift Log")
+        .interactiveDismissDisabled(sending)
+    }
+
+    private func send() {
+        guard canSend else { return }
+        let payload = FeedbackPayload(content: trimmedContent, userPassword: password)
+        sending = true
+        errorMessage = nil
+        Task { @MainActor in
+            defer { sending = false }
+            do {
+                var request = URLRequest(url: URL(string: "https://api.jace-s.com/comments")!, timeoutInterval: 15)
+                request.httpMethod = "POST"
+                request.httpShouldHandleCookies = false
+                request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+                request.httpBody = try JSONEncoder().encode(payload)
+                let (_, response) = try await URLSession.shared.data(for: request)
+                switch (response as? HTTPURLResponse)?.statusCode {
+                case 201:
+                    content = ""
+                    password = ""
+                    sent = true
+                case 429:
+                    errorMessage = "Too many attempts. Please try again later."
+                default:
+                    errorMessage = "Could not send feedback. Please try again."
+                }
+            } catch {
+                errorMessage = "Could not send feedback. Please try again."
+            }
+        }
+    }
+
+    private struct FeedbackPayload: Encodable {
+        let content: String
+        let userPassword: String
+        let sourceAppId = 8
     }
 }

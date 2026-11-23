@@ -30,17 +30,12 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent(this, WorkoutActivity::class.java))
         }
         findViewById<View>(R.id.button_settings_about).setOnClickListener {
-            val version = packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
-            AlertDialog.Builder(this)
-                .setTitle(R.string.settings_about)
-                .setMessage(getString(R.string.settings_about_message, version))
-                .setNeutralButton(R.string.settings_about_developer) { _, _ ->
-                    openSite("https://jace-s.com/about")
-                }
-                .setPositiveButton(android.R.string.ok, null).show()
+            openSite("https://jace-s.com/about")
         }
         findViewById<View>(R.id.button_settings_feedback).setOnClickListener {
-            openSite("https://jace-s.com/feedback/8")
+            if (supportFragmentManager.findFragmentByTag("feedback") == null) {
+                FeedbackDialog().showNow(supportFragmentManager, "feedback")
+            }
         }
         renderExercises()
         bindButtonOpacity()
