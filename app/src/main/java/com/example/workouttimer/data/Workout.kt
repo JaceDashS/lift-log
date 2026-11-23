@@ -2,14 +2,14 @@ package com.example.workouttimer.data
 
 import java.time.LocalDate
 
-/** A completed set. Rest is the pause immediately before this set. */
+/** A completed set. Rest is measured between consecutive sets of the same exercise. */
 data class WorkoutSet(
     val id: Long = 0,
     val sessionId: Long,
     val exercise: String,
     val weightKg: Double,
-    val reps: Int,
-    val restMillis: Long,
+    val reps: Int?,
+    val restMillis: Long?,
 )
 
 /** One workout on a local calendar date, independent of other workouts on that date. */
@@ -33,8 +33,19 @@ data class SessionDraft(
     val exercise: String = "",
     val weight: String = "",
     val reps: String = "",
+    val setLogged: Boolean = false,
+    val workoutStartedAt: Long? = restStartedWall,
+    val previousExercise: String? = null,
+    val unloggedSets: Int = 0,
 ) {
+    val isExerciseTransition: Boolean
+        get() = previousExercise != null && exercise.isNotBlank() && exercise.trim() != previousExercise
+
+    val recordedRestMillis: Long?
+        get() = frozenRestMillis.takeIf { exercise.isNotBlank() && exercise.trim() == previousExercise }
+
     fun restMillis(wall: Long, elapsed: Long, bootCount: Int): Long = when {
+        workoutStartedAt == null -> 0L
         pushing -> frozenRestMillis
         bootCount == boot && elapsed >= restStartedElapsed -> elapsed - restStartedElapsed
         else -> wall - restStartedWall
@@ -42,24 +53,36 @@ data class SessionDraft(
 
     fun push(wall: Long, elapsed: Long, bootCount: Int): SessionDraft =
         if (pushing) this else copy(
-            pushing = true, frozenRestMillis = restMillis(wall, elapsed, bootCount)
+            pushing = true, frozenRestMillis = restMillis(wall, elapsed, bootCount),
+            workoutStartedAt = workoutStartedAt ?: wall, reps = "",
         )
 
-    fun rest(wall: Long, elapsed: Long, bootCount: Int): SessionDraft = copy(
+    fun rest(wall: Long, elapsed: Long, bootCount: Int, keepReps: Boolean = false): SessionDraft = copy(
         pushing = false, restStartedWall = wall, restStartedElapsed = elapsed,
-        boot = bootCount, frozenRestMillis = 0, reps = ""
+        boot = bootCount, frozenRestMillis = 0, reps = if (keepReps) reps else "", setLogged = false,
+        previousExercise = exercise.trim().takeIf { it.isNotEmpty() },
+        unloggedSets = unloggedSets + if (exercise.isBlank() && !setLogged) 1 else 0,
     )
 }
 
 /** Shared validation for real and manually entered test sets; zero weight supports bodyweight sets. */
 object SetInput {
+    const val KG_PER_POUND = 0.45359237
+    const val MAX_REPS = 10000
+
+    fun validExercise(exercise: String): Boolean = exercise.trim().length in 1..100
+
+    fun weightKg(weight: String, pounds: Boolean): Double? =
+        weight.trim().replace(',', '.').toDoubleOrNull()
+            ?.let { if (pounds) it * KG_PER_POUND else it }
+            ?.takeIf { it in 0.0..10000.0 }
+
     fun valid(exercise: String, weight: String, reps: String): Boolean {
-        val kg = weight.toDoubleOrNull()
-        val count = reps.toIntOrNull()
-        return exercise.trim().isNotEmpty() && exercise.trim().length <= 100 &&
-            kg != null && kg.isFinite() && kg >= 0 && kg <= 10000 &&
-            count != null && count in 1..10000
+        return validExercise(exercise) && weightKg(weight, pounds = false) != null &&
+            repCount(reps) != null
     }
+
+    fun repCount(reps: String): Int? = reps.toIntOrNull()?.takeIf { it in 1..MAX_REPS }
 
     /** Parses a nonnegative duration as seconds or minutes:seconds. */
     fun restMillis(text: String): Long? {
@@ -86,5 +109,8 @@ object WorkoutHistory {
             .sortedWith(compareBy<WorkoutSession> { it.date }.thenBy { it.startedAt }.thenBy { it.id })
 
     fun average(sets: List<WorkoutSet>): Double =
-        if (sets.isEmpty()) 0.0 else sets.map { it.reps }.average()
+        averageReps(sets) ?: 0.0
+
+    fun averageReps(sets: List<WorkoutSet>): Double? =
+        sets.mapNotNull { it.reps }.average().takeUnless { it.isNaN() }
 }

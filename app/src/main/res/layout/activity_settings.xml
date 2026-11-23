@@ -28,41 +28,31 @@
                 style="@style/LiftText.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_chart" />
+                android:text="@string/settings_exercises" />
 
             <TextView
+                android:id="@+id/text_settings_exercises"
                 style="@style/LiftText"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/lift_gap_sm"
-                android:text="@string/settings_chart_spacing" />
+                android:layout_marginTop="@dimen/lift_gap_sm" />
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/toggle_settings_spacing"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_settings_add_exercise"
+                style="@style/LiftButton.Secondary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/lift_gap_sm"
-                app:checkedButton="@id/button_settings_per_session"
-                app:selectionRequired="true"
-                app:singleSelection="true">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_settings_per_session"
-                    style="@style/LiftButton.Segment"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/trend_per_session" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_settings_per_day"
-                    style="@style/LiftButton.Segment"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/trend_per_day" />
-            </com.google.android.material.button.MaterialButtonToggleGroup>
+                android:text="@string/add_exercise" />
         </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_settings_layout"
+            style="@style/LiftButton.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lift_gap_md"
+            android:text="@string/home_layout" />
 
         <LinearLayout
             style="@style/LiftCard"
@@ -71,190 +61,62 @@
             android:layout_marginTop="@dimen/lift_gap_md"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/text_button_opacity"
+                style="@style/LiftText.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/slider_button_opacity" />
+
+            <SeekBar
+                android:id="@+id/slider_button_opacity"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:min="35"
+                android:max="90" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/LiftText.Label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/settings_test_mode" />
-
-                    <TextView
-                        style="@style/LiftText.Note"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/lift_gap_xs"
-                        android:text="@string/settings_test_mode_note" />
-                </LinearLayout>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_settings_test_mode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:thumbTint="@color/lift_switch_thumb"
-                    app:trackTint="@color/lift_switch_track" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/panel_settings_test_data"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:background="@drawable/bg_lift_input"
+                android:gravity="center"
+                android:importantForAccessibility="noHideDescendants"
+                android:orientation="horizontal"
+                android:padding="@dimen/lift_gap_xs">
 
                 <TextView
-                    style="@style/LiftText.Title"
+                    android:id="@+id/preview_timer_opacity"
+                    style="@style/LiftText.Value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/lift_gap_lg"
-                    android:text="@string/test_add_title" />
+                    android:layout_marginEnd="@dimen/lift_gap_md"
+                    android:text="0:00" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/lift_gap_md"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/input_test_date"
-                        style="@style/LiftInput"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/lift_gap_sm"
-                        android:layout_weight="1"
-                        android:hint="@string/test_date_hint"
-                        android:importantForAutofill="no"
-                        android:inputType="date" />
-
-                    <EditText
-                        android:id="@+id/input_test_exercise"
-                        style="@style/LiftInput"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/lift_gap_sm"
-                        android:layout_weight="1"
-                        android:hint="@string/session_exercise_hint"
-                        android:importantForAutofill="no"
-                        android:inputType="textNoSuggestions" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/lift_gap_sm"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/input_test_weight"
-                        style="@style/LiftInput"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/lift_gap_xs"
-                        android:layout_weight="1"
-                        android:hint="@string/test_weight_hint"
-                        android:importantForAutofill="no"
-                        android:inputType="numberDecimal" />
-
-                    <EditText
-                        android:id="@+id/input_test_reps"
-                        style="@style/LiftInput"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/lift_gap_xs"
-                        android:layout_marginEnd="@dimen/lift_gap_xs"
-                        android:layout_weight="1"
-                        android:hint="@string/test_reps_hint"
-                        android:importantForAutofill="no"
-                        android:inputType="number" />
-
-                    <EditText
-                        android:id="@+id/input_test_rest"
-                        style="@style/LiftInput"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/lift_gap_xs"
-                        android:layout_weight="1"
-                        android:hint="@string/test_rest_hint"
-                        android:importantForAutofill="no"
-                        android:inputType="time" />
-                </LinearLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_test_add"
-                    style="@style/LiftButton.Primary"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/lift_input_height"
-                    android:layout_marginTop="@dimen/lift_gap_md"
-                    android:text="@string/test_add_button" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_test_fill"
-                    style="@style/LiftButton.Secondary"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/lift_input_height"
-                    android:layout_marginTop="@dimen/lift_gap_sm"
-                    android:text="@string/test_fill_random" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_test_clear"
-                    style="@style/LiftButton.Text"
+                <TextView
+                    android:id="@+id/preview_button_opacity"
+                    style="@style/LiftText.OverlayCounter"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="@dimen/lift_gap_xs"
-                    android:text="@string/test_clear"
-                    android:textColor="@color/lift_down" />
+                    android:layout_height="48dp"
+                    android:paddingHorizontal="@dimen/lift_gap_md"
+                    android:text="@string/start_set" />
             </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/row_settings_overlay_timer"
-            style="@style/LiftCard"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_settings_about"
+            style="@style/LiftButton.Secondary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/lift_gap_md"
-            android:background="@drawable/bg_lift_card_pressable"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:text="@string/settings_about" />
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/LiftText.Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/settings_overlay_timer" />
-
-                <TextView
-                    style="@style/LiftText.Note"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/lift_gap_xs"
-                    android:text="@string/settings_overlay_timer_note" />
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_lift_arrow"
-                app:tint="@color/lift_text_dim" />
-        </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_settings_feedback"
+            style="@style/LiftButton.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lift_gap_sm"
+            android:text="@string/settings_feedback" />
 
         <TextView
             style="@style/LiftText.Label"

@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.text.InputType
+import android.view.WindowManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -24,7 +26,6 @@ class SessionActivity : AppCompatActivity() {
     private var binding = false
     private lateinit var exercise: EditText
     private lateinit var weight: EditText
-    private lateinit var reps: EditText
     private val handler = Handler(Looper.getMainLooper())
     private val tick = object : Runnable {
         override fun run() { updateTimer(); handler.postDelayed(this, 200) }
@@ -37,14 +38,12 @@ class SessionActivity : AppCompatActivity() {
         draft = store.start(test)
         exercise = findViewById(R.id.input_session_exercise)
         weight = findViewById(R.id.input_session_weight)
-        reps = findViewById(R.id.input_session_reps)
         exercise.setText(draft.exercise)
         weight.setText(draft.weight)
-        reps.setText(draft.reps)
-        listOf(exercise, weight, reps).forEach { input ->
+        listOf(exercise, weight).forEach { input ->
             input.doAfterTextChanged {
                 if (!binding) {
-                    draft = draft.copy(exercise = exercise.text.toString(), weight = weight.text.toString(), reps = reps.text.toString())
+                    draft = draft.copy(exercise = exercise.text.toString(), weight = weight.text.toString())
                     persist { store.saveDraft(draft, test) }
                 }
             }
@@ -53,7 +52,7 @@ class SessionActivity : AppCompatActivity() {
             val next = draft.push(System.currentTimeMillis(), SystemClock.elapsedRealtime(), store.bootCount())
             if (persist { store.saveDraft(next, test) }) { draft = next; render() }
         }
-        findViewById<TextView>(R.id.button_session_rest).setOnClickListener { saveSet() }
+        findViewById<TextView>(R.id.button_session_rest).setOnClickListener { promptForReps() }
         findViewById<TextView>(R.id.button_session_end).setOnClickListener { endSession() }
         render()
     }
@@ -67,7 +66,6 @@ class SessionActivity : AppCompatActivity() {
             binding = true
             exercise.setText(draft.exercise)
             weight.setText(draft.weight)
-            reps.setText(draft.reps)
             binding = false
             render()
         }
@@ -77,26 +75,52 @@ class SessionActivity : AppCompatActivity() {
 
     override fun onPause() { handler.removeCallbacks(tick); super.onPause() }
 
-    private fun saveSet(): Boolean {
-        if (!SetInput.valid(draft.exercise, draft.weight, draft.reps)) {
-            if (draft.exercise.trim().isEmpty() || draft.exercise.trim().length > 100) exercise.error = getString(R.string.error_exercise)
-            val kg = draft.weight.toDoubleOrNull()
-            if (kg == null || !kg.isFinite() || kg !in 0.0..10000.0) weight.error = getString(R.string.error_weight)
-            if (draft.reps.toIntOrNull() !in 1..10000) reps.error = getString(R.string.error_reps)
-            return false
+    private fun promptForReps(onSaved: () -> Unit = {}) {
+        val current = draft
+        fun startRest(reps: String): Boolean {
+            if (!persist { draft = store.startRest(current, test, reps) }) return false
+            render()
+            return true
         }
-        if (!persist { draft = store.completeSet(draft, test) }) return false
-        binding = true
-        reps.setText("")
-        binding = false
-        render()
-        return true
+        if (current.exercise.isBlank() || current.setLogged) {
+            if (startRest("")) onSaved()
+            return
+        }
+        if (!SetInput.validExercise(current.exercise)) {
+            exercise.error = getString(R.string.error_exercise)
+            return
+        }
+        if (SetInput.weightKg(current.weight, pounds = false) == null) {
+            weight.error = getString(R.string.error_weight)
+            return
+        }
+        val input = EditText(this).apply {
+            inputType = InputType.TYPE_CLASS_NUMBER
+            setHint(R.string.overlay_reps_label)
+            requestFocus()
+        }
+        val dialog = AlertDialog.Builder(this).setTitle(R.string.overlay_reps_label).setView(input)
+            .setPositiveButton(R.string.start_rest, null)
+            .setNegativeButton(android.R.string.cancel, null).create()
+        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val reps = input.text.toString().trim()
+                if (SetInput.repCount(reps) == null) {
+                    input.error = getString(R.string.error_reps)
+                } else if (startRest(reps)) {
+                    dialog.dismiss()
+                    onSaved()
+                }
+            }
+        }
+        dialog.show()
     }
 
     private fun endSession() {
         if (!draft.pushing) { finishWorkout(); return }
         AlertDialog.Builder(this).setTitle(R.string.end_title).setMessage(R.string.end_message)
-            .setPositiveButton(R.string.save_and_end) { _, _ -> if (saveSet()) finishWorkout() }
+            .setPositiveButton(R.string.save_and_end) { _, _ -> promptForReps(::finishWorkout) }
             .setNeutralButton(R.string.discard_and_end) { _, _ -> finishWorkout() }
             .setNegativeButton(android.R.string.cancel, null).show()
     }
@@ -118,13 +142,13 @@ class SessionActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.button_session_rest).isEnabled = draft.pushing
         val sets = store.sessions(test).firstOrNull { it.id == draft.sessionId }?.sets.orEmpty()
         findViewById<TextView>(R.id.text_session_set).text = getString(R.string.session_set_format,
-            sets.size + 1, draft.exercise.ifBlank { getString(R.string.session_title) })
+            sets.size + draft.unloggedSets + 1, draft.exercise.ifBlank { getString(R.string.session_title) })
         bindSetRows(findViewById(R.id.list_session_sets), sets)
         updateTimer()
     }
 
     private fun updateTimer() {
-        findViewById<TextView>(R.id.text_session_timer).text = duration(
+        findViewById<TextView>(R.id.text_session_timer).text = if (draft.pushing) getString(R.string.workout_go) else duration(
             draft.restMillis(System.currentTimeMillis(), SystemClock.elapsedRealtime(), store.bootCount()))
     }
 

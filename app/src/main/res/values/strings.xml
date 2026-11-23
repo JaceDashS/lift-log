@@ -19,6 +19,7 @@
     <string name="end">End</string>
     <string name="edit_mode">Edit Mode</string>
     <string name="done_edit">Done</string>
+    <string name="save_layout">Save layout</string>
     <string name="reset_layout">Reset</string>
     <string name="clear_log">Clear Log</string>
     <string name="edit_slider_alpha">Alpha</string>
@@ -26,7 +27,7 @@
     <string name="edit_slider_button_size">Button Size</string>
     <string name="edit_slider_set_font">Set Font Size</string>
     <string name="edit_drag_hint">Drag Here</string>
-    <string name="set_count_format">Set: %1$d</string>
+    <string name="set_count_format">Total sets · %1$d</string>
     <string name="total_count_format">Total: %1$d</string>
     <string name="total_time_format">Time: %1$s</string>
     <string name="notification_set_format">Set %1$d · %2$s</string>

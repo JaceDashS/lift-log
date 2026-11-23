@@ -1,5 +1,8 @@
 package com.example.workouttimer.ui
 
+import android.content.Context
+import com.example.workouttimer.R
+import com.example.workouttimer.data.WorkoutSet
 import java.util.Locale
 
 /** Elapsed milliseconds rendered as unbounded minutes and two digit seconds. */
@@ -11,3 +14,7 @@ fun duration(millis: Long): String {
 /** Compact decimal display for weights and average repetitions. */
 fun decimal(value: Double): String = if (value % 1.0 == 0.0) value.toLong().toString()
     else String.format(Locale.getDefault(), "%.1f", value)
+
+fun Context.recordedLoad(set: WorkoutSet): String = set.reps?.let {
+    getString(R.string.history_load, it, decimal(set.weightKg))
+} ?: getString(R.string.weight_with_unit, decimal(set.weightKg), getString(R.string.weight_kg_unit))

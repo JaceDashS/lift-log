@@ -17,9 +17,11 @@ fun bindSetRows(container: LinearLayout, entries: List<WorkoutSet>) {
         counts[entry.exercise] = number
         row.findViewById<TextView>(R.id.text_set_no).text = number.toString()
         row.findViewById<TextView>(R.id.text_set_exercise).text = entry.exercise
-        row.findViewById<TextView>(R.id.text_set_load).text =
-            container.context.getString(R.string.set_row_load_format, decimal(entry.weightKg), entry.reps)
-        row.findViewById<TextView>(R.id.text_set_rest).text = duration(entry.restMillis)
+        row.findViewById<TextView>(R.id.text_set_load).text = entry.reps?.let {
+            container.context.getString(R.string.set_row_load_format, decimal(entry.weightKg), it)
+        } ?: container.context.recordedLoad(entry)
+        row.findViewById<TextView>(R.id.text_set_rest).text = entry.restMillis?.let(::duration)
+            ?: container.context.getString(R.string.missing_value)
         container.addView(row)
     }
 }

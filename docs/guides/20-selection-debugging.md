@@ -37,19 +37,6 @@ The same messages are also emitted to Logcat with tag:
 
 - `SelectionDebug`
 
-## Clear Log Button
-
-`Clear Log` is available on the overlay tools screen (SETTINGS > Overlay tools) before entering developer mode.
-
-Button order:
-
-- `Start Workout`
-- `Dev Mode`
-- `Reset All Settings`
-- `Clear Log`
-
-Pressing `Clear Log` deletes `selection-debug.log`.
-
 ## Useful Commands
 
 Delete the log:

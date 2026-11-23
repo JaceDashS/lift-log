@@ -18,6 +18,19 @@
         app:strokeColor="#AA000000"
         app:strokeWidth="@dimen/ui_timer_stroke_width" />
 
+    <com.example.workouttimer.StrokeTextView
+        android:id="@+id/text_rest_transition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/lift_gutter"
+        android:gravity="center"
+        android:text="@string/rest_same_exercise_note"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/lift_text_caption"
+        android:visibility="gone"
+        app:strokeColor="#CC000000"
+        app:strokeWidth="1dp" />
+
     <LinearLayout
         android:id="@+id/edit_toolbar"
         android:layout_width="@dimen/ui_edit_toolbar_panel_width"
@@ -37,53 +50,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/ui_edit_toolbar_section_spacing"
-            android:text="@string/edit_slider_alpha"
-            android:textColor="@android:color/white" />
-
-        <SeekBar
-            android:id="@+id/slider_alpha"
-            android:layout_width="@dimen/ui_edit_toolbar_slider_width"
-            android:layout_height="wrap_content"
-            android:max="@integer/ui_alpha_slider_max"
-            android:progress="@integer/ui_alpha_slider_default_progress" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/ui_edit_toolbar_section_spacing"
-            android:text="@string/edit_slider_button_font"
-            android:textColor="@android:color/white" />
-
-        <SeekBar
-            android:id="@+id/slider_button_font_size"
-            android:layout_width="@dimen/ui_edit_toolbar_slider_width"
-            android:layout_height="wrap_content"
-            android:max="@integer/ui_alpha_slider_max"
-            android:progress="@integer/ui_alpha_slider_default_progress" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/ui_edit_toolbar_section_spacing"
             android:text="@string/edit_slider_button_size"
             android:textColor="@android:color/white" />
 
         <SeekBar
             android:id="@+id/slider_button_size"
-            android:layout_width="@dimen/ui_edit_toolbar_slider_width"
-            android:layout_height="wrap_content"
-            android:max="@integer/ui_alpha_slider_max"
-            android:progress="@integer/ui_alpha_slider_default_progress" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/ui_edit_toolbar_section_spacing"
-            android:text="@string/edit_slider_set_font"
-            android:textColor="@android:color/white" />
-
-        <SeekBar
-            android:id="@+id/slider_set_font_size"
             android:layout_width="@dimen/ui_edit_toolbar_slider_width"
             android:layout_height="wrap_content"
             android:max="@integer/ui_alpha_slider_max"
@@ -95,86 +66,84 @@
             android:layout_marginTop="@dimen/ui_spacing_sm"
             android:orientation="horizontal">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_done_edit"
+                style="@style/LiftButton.Primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minWidth="@dimen/ui_size_zero"
-                android:text="@string/done_edit"
-                android:textColor="@android:color/black" />
+                android:text="@string/save_layout" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_reset_layout"
+                style="@style/LiftButton.Secondary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/ui_spacing_sm"
                 android:minWidth="@dimen/ui_size_zero"
-                android:text="@string/reset_layout"
-                android:textColor="@android:color/black" />
+                android:text="@string/reset_layout" />
         </LinearLayout>
     </LinearLayout>
 
-    <com.example.workouttimer.StrokeTextView
+    <TextView
         android:id="@+id/text_set_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/LiftText.OverlayCounter"
+        android:layout_width="106dp"
+        android:layout_height="48dp"
         android:layout_gravity="top|start"
-        android:layout_marginStart="@dimen/ui_spacing_md"
+        android:layout_marginStart="@dimen/ui_spacing_sm"
         android:layout_marginTop="@dimen/ui_set_count_margin_top"
-        android:text="Set: 0"
-        android:textColor="#FFFFFFFF"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:strokeColor="#AA000000"
-        app:strokeWidth="@dimen/ui_text_stroke_secondary" />
+        android:text="Total sets · 0" />
 
-    <com.example.workouttimer.StrokeTextView
+    <TextView
         android:id="@+id/text_total_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/LiftText.OverlayCounter"
+        android:layout_width="82dp"
+        android:layout_height="48dp"
         android:layout_gravity="top|start"
-        android:layout_marginStart="@dimen/ui_spacing_md"
-        android:layout_marginTop="@dimen/ui_total_count_margin_top"
-        android:text="Total: 0"
-        android:textColor="#FFFFFFFF"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:strokeColor="#AA000000"
-        app:strokeWidth="@dimen/ui_text_stroke_secondary" />
+        android:layout_marginStart="118dp"
+        android:layout_marginTop="@dimen/ui_set_count_margin_top"
+        android:text="Time: 0:00" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/button_start"
-        android:layout_width="@dimen/ui_control_button_width"
-        android:layout_height="wrap_content"
+        style="@style/LiftButton.Overlay"
+        android:layout_width="@dimen/ui_phase_button_width"
+        android:layout_height="48dp"
         android:layout_gravity="top|end"
         android:layout_marginTop="@dimen/ui_start_button_margin_top"
-        android:layout_marginEnd="@dimen/ui_spacing_md"
-        android:text="@string/start" />
+        android:layout_marginEnd="@dimen/ui_spacing_sm"
+        android:text="@string/start_set" />
 
-    <Button
-        android:id="@+id/button_reset_set"
-        android:layout_width="@dimen/ui_control_button_width"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:layout_marginTop="@dimen/ui_reset_button_margin_top"
-        android:layout_marginEnd="@dimen/ui_spacing_md"
-        android:text="@string/set_reset" />
-
-    <Button
-        android:id="@+id/button_edit"
-        android:layout_width="@dimen/ui_control_button_width"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/ui_overlay_edit_button_margin_bottom"
-        android:layout_marginEnd="@dimen/ui_spacing_md"
-        android:text="@string/edit_mode" />
-
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/button_end"
-        android:layout_width="@dimen/ui_control_button_width"
-        android:layout_height="wrap_content"
+        style="@style/LiftButton.Overlay"
+        android:layout_width="58dp"
+        android:layout_height="48dp"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/ui_spacing_md"
-        android:layout_marginEnd="@dimen/ui_spacing_md"
+        android:layout_marginBottom="@dimen/ui_spacing_sm"
+        android:layout_marginEnd="@dimen/ui_spacing_sm"
         android:text="@string/end" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/workout_exercise"
+        style="@style/LiftButton.Overlay"
+        android:layout_width="96dp"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="@dimen/ui_spacing_sm"
+        android:layout_marginBottom="@dimen/ui_spacing_sm"
+        android:text="@string/session_exercise" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/workout_weight"
+        style="@style/LiftButton.Overlay"
+        android:layout_width="68dp"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="108dp"
+        android:layout_marginBottom="@dimen/ui_spacing_sm"
+        android:text="@string/weight_entry_hint" />
 
     <View
         android:id="@+id/snap_guide_vertical"

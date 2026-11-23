@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -11,24 +12,225 @@
         android:padding="@dimen/lift_gutter">
 
         <TextView
-            android:id="@+id/text_records_title"
             style="@style/LiftText.Headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/records_title" />
 
-        <TextView
-            style="@style/LiftText.Label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/lift_gap_lg"
-            android:text="@string/records_exercises" />
+        <Spinner
+            android:id="@+id/spinner_records_exercise"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="@dimen/lift_gap_sm"
+            android:contentDescription="@string/records_exercises" />
 
-        <LinearLayout
-            android:id="@+id/list_records_exercises"
+        <TextView
+            android:id="@+id/text_records_empty"
+            style="@style/LiftText.Note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/lift_gap_sm"
-            android:orientation="vertical" />
+            android:layout_marginTop="@dimen/lift_gap_md"
+            android:text="@string/empty_records" />
+
+        <LinearLayout
+            android:id="@+id/card_records_trend"
+            style="@style/LiftCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lift_gap_md"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/LiftText.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/trend_title" />
+
+            <TextView
+                style="@style/LiftText.Note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lift_gap_xs"
+                android:text="@string/trend_baseline" />
+
+            <TextView
+                android:id="@+id/text_trend_zero_baseline"
+                style="@style/LiftText.Note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lift_gap_xs"
+                android:text="@string/trend_zero_baseline"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_trend_spacing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lift_gap_md"
+                app:checkedButton="@id/button_trend_per_day"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_trend_per_session"
+                    style="@style/LiftButton.Segment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/trend_per_session" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_trend_per_day"
+                    style="@style/LiftButton.Segment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/trend_per_day" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lift_gap_xs"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_trend_weight"
+                    style="@style/LiftButton.Secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/lift_gap_xs"
+                    android:layout_weight="1"
+                    android:checkable="true"
+                    android:minHeight="48dp"
+                    android:paddingHorizontal="2dp"
+                    android:text="@string/trend_weight"
+                    android:textSize="@dimen/lift_text_caption" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_trend_reps"
+                    style="@style/LiftButton.Secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/lift_gap_xs"
+                    android:layout_weight="1"
+                    android:checkable="true"
+                    android:minHeight="48dp"
+                    android:paddingHorizontal="2dp"
+                    android:text="@string/trend_reps"
+                    android:textSize="@dimen/lift_text_caption" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_trend_rest"
+                    style="@style/LiftButton.Secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checkable="true"
+                    android:minHeight="48dp"
+                    android:paddingHorizontal="2dp"
+                    android:text="@string/trend_rest"
+                    android:textSize="@dimen/lift_text_caption" />
+            </LinearLayout>
+
+            <com.example.workouttimer.ui.TrendChartView
+                android:id="@+id/chart_trend"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/lift_chart_height"
+                android:layout_marginTop="@dimen/lift_gap_md" />
+
+            <LinearLayout
+                android:id="@+id/panel_trend_selected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lift_gap_sm"
+                android:accessibilityLiveRegion="polite"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_trend_selected_date"
+                    style="@style/LiftText.Label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/text_trend_selected_values"
+                    style="@style/LiftText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/lift_gap_xs" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_edit_records"
+            style="@style/LiftButton.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="@dimen/lift_gap_md"
+            android:text="@string/edit_records" />
+
+        <LinearLayout
+            android:id="@+id/card_records_compare"
+            style="@style/LiftCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lift_gap_md"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/LiftText.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/compare_title" />
+
+            <Spinner
+                android:id="@+id/spinner_history_session"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:contentDescription="@string/history_select" />
+
+            <TextView
+                android:id="@+id/text_compare_sessions"
+                style="@style/LiftText.Note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lift_gap_xs" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lift_gap_md"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/LiftText.Label"
+                    android:layout_width="@dimen/lift_row_height"
+                    android:layout_height="wrap_content"
+                    android:text="@string/compare_col_set" />
+
+                <TextView
+                    style="@style/LiftText.Label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/compare_col_reps" />
+
+                <TextView
+                    style="@style/LiftText.Label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="@string/compare_col_rest" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/list_compare_rows"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </LinearLayout>
+
     </LinearLayout>
 </ScrollView>

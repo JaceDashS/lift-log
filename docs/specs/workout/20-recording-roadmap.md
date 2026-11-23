@@ -12,11 +12,11 @@ rest일때는 시간이 흐르고 운동이 시작하면 시간이 멈춘다
 4. 어떤 운동 종목을 선택하면 이걸 언제 했는지 평균 몇개했는지를 볼수있다.
 이때 설정에 따라서 하루를 한칸으로 두고 할지 횟수를 한칸으로 두고 할지를 볼수있다.
 예를들어 하루를 한칸으로 두고 일주일에 한번했으면 남은 6일동안은 점은 없지만 두 점을 잇는선은 있어야한다.
-1회를 한칸으로 두면 매 공간마다 점이 있어서 연결되어있어야함(이게 디폴트)
+1회를 한 칸으로 두면 각 운동 시점이 같은 간격으로 연결된다. 기본값은 날짜별 간격이다.
 5. 테스트모드가 있어야함 내가 안에 임의의 데이터를 넣을수있어야함
 6. 앱을 처음키면 운동시작이랑 기록보기 설정 등이 있어야함
 ## Implementation Status
-Reps are chosen once before START together with exercise and weight, and REST reuses them for every set, so the overlay never needs a keyboard. This replaces "reps are entered again every set" from item 2. All six roadmap items are implemented: new screens, REST and PUSH timing, persistent sets, exercise history and comparisons, configurable graphs, and isolated test data entry. See [App Screens](30-app-screens.md) and [Design](../../design/workout/20-recording-roadmap.md).
+The overlay has an exercise picker, optional repetitions remembered per exercise, and kg or lb entry. Start rest stores a completed set and starts the rest timer. Exercise history, chart spacing and isolated test data remain available. See [App Screens](30-app-screens.md) and [Design](../../design/workout/20-recording-roadmap.md).
 
 ## Example
 - Input: A future record with exercise, weight, repetitions and rest duration.

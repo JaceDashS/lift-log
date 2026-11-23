@@ -84,6 +84,16 @@
         <item name="android:singleLine">true</item>
     </style>
 
+    <style name="LiftButton.Overlay" parent="LiftButton.Secondary">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:insetTop">5dp</item>
+        <item name="android:insetBottom">5dp</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <style name="LiftText.FieldLabel">
         <item name="android:textSize">@dimen/lift_text_caption</item>
         <item name="android:textStyle">bold</item>
@@ -92,6 +102,18 @@
     <style name="LiftText.Note">
         <item name="android:textColor">@color/lift_text_dim</item>
         <item name="android:textSize">@dimen/lift_text_caption</item>
+    </style>
+
+    <style name="LiftText.OverlayCounter">
+        <item name="android:background">@drawable/bg_lift_counter</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">32dp</item>
+        <item name="android:paddingHorizontal">4dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFeatureSettings">tnum</item>
     </style>
 
     <style name="LiftText.Chip">

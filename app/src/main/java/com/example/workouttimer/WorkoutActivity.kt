@@ -1,8 +1,8 @@
-﻿package com.example.workouttimer
+package com.example.workouttimer
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.graphics.Matrix
 import android.graphics.RectF
 import android.os.Handler
@@ -16,16 +16,17 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.workouttimer.constants.AppMagicNumbers
+import com.example.workouttimer.data.WorkoutStore
+import com.example.workouttimer.ui.OverlaySetInputs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.max
@@ -36,11 +37,8 @@ class WorkoutActivity : AppCompatActivity() {
 
     private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private lateinit var overlayPreferences: OverlayPreferences
+    private val store by lazy { WorkoutStore.get(this) }
 
-    private var timer: CountDownTimer? = null
-    private var elapsedSeconds = AppMagicNumbers.Common.INT_ZERO
-    private var setCount = AppMagicNumbers.Common.INT_ZERO
-    private var totalCount = AppMagicNumbers.Common.INT_ZERO
     private var editMode = false
 
     private lateinit var workoutRoot: FrameLayout
@@ -48,15 +46,10 @@ class WorkoutActivity : AppCompatActivity() {
     private lateinit var setCountText: TextView
     private lateinit var totalCountText: TextView
     private lateinit var startButton: Button
-    private lateinit var resetButton: Button
-    private lateinit var editButton: Button
     private lateinit var endButton: Button
     private lateinit var doneEditButton: Button
     private lateinit var resetLayoutButton: Button
-    private lateinit var alphaSlider: SeekBar
-    private lateinit var buttonFontSizeSlider: SeekBar
     private lateinit var buttonSizeSlider: SeekBar
-    private lateinit var setFontSizeSlider: SeekBar
     private lateinit var editToolbar: View
     private lateinit var selectionOverlay: FrameLayout
     private lateinit var selectionBorder: View
@@ -116,15 +109,10 @@ class WorkoutActivity : AppCompatActivity() {
         setCountText = findViewById(R.id.text_set_count)
         totalCountText = findViewById(R.id.text_total_count)
         startButton = findViewById(R.id.button_start)
-        resetButton = findViewById(R.id.button_reset_set)
-        editButton = findViewById(R.id.button_edit)
         endButton = findViewById(R.id.button_end)
         doneEditButton = findViewById(R.id.button_done_edit)
         resetLayoutButton = findViewById(R.id.button_reset_layout)
-        alphaSlider = findViewById(R.id.slider_alpha)
-        buttonFontSizeSlider = findViewById(R.id.slider_button_font_size)
         buttonSizeSlider = findViewById(R.id.slider_button_size)
-        setFontSizeSlider = findViewById(R.id.slider_set_font_size)
         editToolbar = findViewById(R.id.edit_toolbar)
         selectionOverlay = findViewById(R.id.selection_overlay)
         selectionBorder = findViewById(R.id.selection_border)
@@ -141,22 +129,9 @@ class WorkoutActivity : AppCompatActivity() {
             R.id.handle_se to ResizeHandle(AppMagicNumbers.Common.FLOAT_ONE, AppMagicNumbers.Common.FLOAT_ONE),
         )
 
-        startButton.setOnClickListener {
-            if (!editMode) startTimer()
-        }
-        resetButton.setOnClickListener {
-            if (!editMode) {
-                setCount = AppMagicNumbers.Common.INT_ZERO
-                updateCounterViews()
-            }
-        }
-        editButton.setOnClickListener {
-            if (!editMode) toggleEditMode(true)
-        }
-        endButton.setOnClickListener {
-            if (!editMode) endSession()
-        }
-        doneEditButton.setOnClickListener { toggleEditMode(false) }
+        startButton.setText(R.string.start_set)
+        doneEditButton.isEnabled = false
+        doneEditButton.setOnClickListener { saveLayout() }
         resetLayoutButton.setOnClickListener {
             if (editMode) resetEditableLayout()
         }
@@ -165,9 +140,8 @@ class WorkoutActivity : AppCompatActivity() {
         editableViews[KEY_SET] = setCountText
         editableViews[KEY_TOTAL] = totalCountText
         editableViews[KEY_START] = startButton
-        editableViews[KEY_RESET] = resetButton
-        editableViews[KEY_EDIT] = editButton
         editableViews[KEY_END] = endButton
+        editableViews.putAll(OverlaySetInputs.layoutElements(workoutRoot))
         defaultButtonTextSizePx = startButton.textSize
         defaultSetTextSizePx = setCountText.textSize
         editableViews.forEach { (key, view) ->
@@ -182,31 +156,6 @@ class WorkoutActivity : AppCompatActivity() {
         attachResizeHandleHandlers()
         attachEditToolbarDragHandler()
 
-        alphaSlider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (!fromUser) return
-                val alpha = OverlayPreferences.MIN_ALPHA +
-                    (progress / AppMagicNumbers.Alpha.PROGRESS_MAX) * (OverlayPreferences.MAX_ALPHA - OverlayPreferences.MIN_ALPHA)
-                workoutRoot.alpha = alpha
-                activityScope.launch { overlayPreferences.saveAlpha(alpha) }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-        })
-        buttonFontSizeSlider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (!fromUser) return
-                applyButtonFontSizeSp(progressToRange(
-                    progress = progress,
-                    min = AppMagicNumbers.EditSliders.BUTTON_FONT_MIN_SP,
-                    max = AppMagicNumbers.EditSliders.BUTTON_FONT_MAX_SP
-                ))
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-        })
         buttonSizeSlider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (!fromUser) return
@@ -220,29 +169,12 @@ class WorkoutActivity : AppCompatActivity() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
         })
-        setFontSizeSlider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (!fromUser) return
-                applySetFontSizeSp(progressToRange(
-                    progress = progress,
-                    min = AppMagicNumbers.EditSliders.SET_FONT_MIN_SP,
-                    max = AppMagicNumbers.EditSliders.SET_FONT_MAX_SP
-                ))
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-        })
-
         activityScope.launch {
-            val state = overlayPreferences.state.first()
-            workoutRoot.alpha = state.alpha
-            alphaSlider.progress = (
-                (state.alpha - OverlayPreferences.MIN_ALPHA) * AppMagicNumbers.Alpha.PROGRESS_MAX /
-                    (OverlayPreferences.MAX_ALPHA - OverlayPreferences.MIN_ALPHA)
-                ).toInt()
+            store.buttonOpacity.collect {
+                refreshSelectionVisuals()
+            }
         }
-        initializeEditControlSliders()
+        initializeButtonSizeSlider()
 
         workoutRoot.post {
             updateDefaultToolbarPosition()
@@ -262,13 +194,14 @@ class WorkoutActivity : AppCompatActivity() {
 
             activityScope.launch {
                 val savedViewport = overlayPreferences.readWorkoutViewportSize()
-                val viewportChanged = savedViewport != null &&
-                    (savedViewport.width != currentViewportWidth || savedViewport.height != currentViewportHeight)
                 editableViews.forEach { (key, view) ->
                     val transform = overlayPreferences.readElementTransform(key)
                     view.scaleX = transform.scaleX
                     view.scaleY = transform.scaleY
                     view.rotation = transform.rotation
+                    if (view is TextView) {
+                        transform.textSizeSp?.let { view.setTextSize(TypedValue.COMPLEX_UNIT_SP, it) }
+                    }
 
                     if (key != KEY_TIMER && transform.x != null && transform.y != null) {
                         val scaled = scalePositionToCurrentViewport(
@@ -282,28 +215,18 @@ class WorkoutActivity : AppCompatActivity() {
                         view.x = scaled.first
                         view.y = scaled.second
 
-                        if (viewportChanged) {
-                            overlayPreferences.saveElementTransform(
-                                elementId = key,
-                                x = scaled.first.toInt(),
-                                y = scaled.second.toInt(),
-                                scaleX = transform.scaleX,
-                                scaleY = transform.scaleY,
-                                rotation = transform.rotation,
-                            )
-                        }
+
                     }
                 }
                 selectedElementKey?.let { key ->
                     editableViews[key]?.let { updateSelectionBox(it) }
                 }
-                overlayPreferences.saveWorkoutViewportSize(currentViewportWidth, currentViewportHeight)
+                initializeButtonSizeSlider()
+                doneEditButton.isEnabled = true
             }
         }
 
-        updateTimerView()
-        updateCounterViews()
-        toggleEditMode(false)
+        toggleEditMode(true)
     }
 
     private fun attachTransformHandlers() {
@@ -424,12 +347,6 @@ class WorkoutActivity : AppCompatActivity() {
                         MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_CANCEL -> {
                             cancelLongPress(handler)
 
-                            if (!longPressTriggered && dragStarted) {
-                                getSelectedKeyValues().forEach { (selectedKey, selectedView) ->
-                                    persistTransformFor(selectedKey, selectedView)
-                                }
-                            }
-
                             clearLongPressSelectionVisuals()
 
                             if (event.actionMasked == MotionEvent.ACTION_UP &&
@@ -533,7 +450,6 @@ class WorkoutActivity : AppCompatActivity() {
                         }
 
                         MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                            persistSelectedTransform()
                             return true
                         }
                     }
@@ -588,87 +504,19 @@ class WorkoutActivity : AppCompatActivity() {
         return ResizeScaleDelta(deltaX, deltaY)
     }
 
-    private fun startTimer() {
-        timer?.cancel()
-        elapsedSeconds = AppMagicNumbers.Common.INT_ZERO
-        setCount += AppMagicNumbers.Timer.START_COUNT_INCREMENT
-        totalCount += AppMagicNumbers.Timer.START_COUNT_INCREMENT
-        updateCounterViews()
-        updateTimerView()
-
-        timer = object : CountDownTimer(AppMagicNumbers.Common.LONG_MAX, AppMagicNumbers.Timer.TICK_MS) {
-            override fun onTick(millisUntilFinished: Long) {
-                elapsedSeconds += AppMagicNumbers.Timer.START_COUNT_INCREMENT
-                updateTimerView()
-            }
-
-            override fun onFinish() = Unit
-        }.start()
-    }
-
-    private fun updateTimerView() {
-        val minutes = elapsedSeconds / AppMagicNumbers.Timer.SECONDS_PER_MINUTE
-        val seconds = elapsedSeconds % AppMagicNumbers.Timer.SECONDS_PER_MINUTE
-        timerText.text = String.format(Locale.US, "%02d:%02d", minutes, seconds)
-    }
-
-    private fun updateCounterViews() {
-        setCountText.text = getString(R.string.set_count_format, setCount)
-        totalCountText.text = getString(R.string.total_count_format, totalCount)
-    }
-
-    private fun initializeEditControlSliders() {
-        val currentButtonSizeSp = pxToSp(startButton.textSize)
-        val currentSetSizeSp = pxToSp(setCountText.textSize)
-        val currentButtonScale = startButton.scaleX
-
-        buttonFontSizeSlider.progress = rangeToProgress(
-            value = currentButtonSizeSp,
-            min = AppMagicNumbers.EditSliders.BUTTON_FONT_MIN_SP,
-            max = AppMagicNumbers.EditSliders.BUTTON_FONT_MAX_SP
-        )
+    private fun initializeButtonSizeSlider() {
         buttonSizeSlider.progress = rangeToProgress(
-            value = currentButtonScale,
+            value = startButton.scaleX,
             min = AppMagicNumbers.EditSliders.BUTTON_SCALE_MIN,
-            max = AppMagicNumbers.EditSliders.BUTTON_SCALE_MAX
+            max = AppMagicNumbers.EditSliders.BUTTON_SCALE_MAX,
         )
-        setFontSizeSlider.progress = rangeToProgress(
-            value = currentSetSizeSp,
-            min = AppMagicNumbers.EditSliders.SET_FONT_MIN_SP,
-            max = AppMagicNumbers.EditSliders.SET_FONT_MAX_SP
-        )
-    }
-
-    private fun applyButtonFontSizeSp(sizeSp: Float) {
-        listOf(
-            startButton,
-            resetButton,
-            editButton,
-            endButton,
-            doneEditButton,
-            resetLayoutButton
-        ).forEach { button ->
-            button.setTextSize(TypedValue.COMPLEX_UNIT_SP, sizeSp)
-        }
     }
 
     private fun applyButtonScale(scale: Float) {
-        listOf(
-            startButton,
-            resetButton,
-            editButton,
-            endButton,
-            doneEditButton,
-            resetLayoutButton
-        ).forEach { button ->
+        editableViews.values.filterIsInstance<Button>().forEach { button ->
             button.scaleX = scale
             button.scaleY = scale
         }
-    }
-
-    private fun applySetFontSizeSp(sizeSp: Float) {
-        setCountText.setTextSize(TypedValue.COMPLEX_UNIT_SP, sizeSp)
-        totalCountText.setTextSize(TypedValue.COMPLEX_UNIT_SP, sizeSp)
     }
 
     private fun progressToRange(progress: Int, min: Float, max: Float): Float {
@@ -706,9 +554,8 @@ class WorkoutActivity : AppCompatActivity() {
         selectedElementKeys.clear()
         selectedElementKey = null
         longPressSelectionVisuals = false
-        val defaultAlpha = if (enabled) AppMagicNumbers.Interaction.NON_SELECTED_ALPHA else AppMagicNumbers.Interaction.FULL_ALPHA
         editableViews.forEach { (key, view) ->
-            view.alpha = defaultAlpha
+            view.alpha = previewOpacity
             if (view is Button) {
                 view.backgroundTintList = defaultButtonTints[key]
             } else if (view is TextView) {
@@ -731,23 +578,19 @@ class WorkoutActivity : AppCompatActivity() {
             view.scaleX = default.scaleX
             view.scaleY = default.scaleY
             view.rotation = default.rotation
-            persistTransformFor(key, view)
         }
 
         editToolbar.x = defaultToolbarX
         editToolbar.y = defaultToolbarY
-        startButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultButtonTextSizePx)
-        resetButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultButtonTextSizePx)
-        editButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultButtonTextSizePx)
-        endButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultButtonTextSizePx)
-        doneEditButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultButtonTextSizePx)
-        resetLayoutButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultButtonTextSizePx)
+        editableViews.values.filterIsInstance<Button>().forEach {
+            it.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultButtonTextSizePx)
+        }
         applyButtonScale(AppMagicNumbers.Common.FLOAT_ONE)
         setCountText.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultSetTextSizePx)
         totalCountText.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultSetTextSizePx)
-        initializeEditControlSliders()
+        initializeButtonSizeSlider()
         editableViews.forEach { (key, view) ->
-            view.alpha = AppMagicNumbers.Interaction.NON_SELECTED_ALPHA
+            view.alpha = previewOpacity
             if (view is Button) {
                 view.backgroundTintList = defaultButtonTints[key]
             } else if (view is TextView) {
@@ -763,12 +606,11 @@ class WorkoutActivity : AppCompatActivity() {
         val toolbarHeight = resolveToolbarHeightPx().toFloat()
         val centeredX = ((workoutRoot.width - toolbarWidth) / AppMagicNumbers.Common.FLOAT_TWO)
             .coerceAtLeast(AppMagicNumbers.Common.FLOAT_ZERO)
-        val centeredY = ((workoutRoot.height - toolbarHeight) / AppMagicNumbers.Common.FLOAT_TWO)
-            .coerceAtLeast(AppMagicNumbers.Common.FLOAT_ZERO)
+        val belowTimer = (workoutRoot.height + timerText.height) / 2f + 12f * resources.displayMetrics.density
         val maxX = (workoutRoot.width - toolbarWidth).toFloat().coerceAtLeast(AppMagicNumbers.Common.FLOAT_ZERO)
         val maxY = (workoutRoot.height - toolbarHeight).toFloat().coerceAtLeast(AppMagicNumbers.Common.FLOAT_ZERO)
         defaultToolbarX = centeredX.coerceIn(AppMagicNumbers.Common.FLOAT_ZERO, maxX)
-        defaultToolbarY = centeredY.coerceIn(AppMagicNumbers.Common.FLOAT_ZERO, maxY)
+        defaultToolbarY = belowTimer.coerceIn(AppMagicNumbers.Common.FLOAT_ZERO, maxY)
     }
 
     private fun resolveToolbarWidthPx(): Int {
@@ -953,7 +795,8 @@ class WorkoutActivity : AppCompatActivity() {
             selectedElementKeys.size >= AppMagicNumbers.Common.INT_TWO
         editableViews.forEach { (entryKey, view) ->
             val isSelected = selectedElementKeys.contains(entryKey)
-            view.alpha = if (isSelected) AppMagicNumbers.Interaction.FULL_ALPHA else AppMagicNumbers.Interaction.NON_SELECTED_ALPHA
+            val dim = selectedElementKeys.isNotEmpty() && !isSelected
+            view.alpha = previewOpacity * if (dim) AppMagicNumbers.Interaction.NON_SELECTED_ALPHA else 1f
             if (view is Button) {
                 view.backgroundTintList = if (isSelected && showMultiSelectHighlight) {
                     ColorStateList.valueOf(selectedButtonColor)
@@ -1009,26 +852,49 @@ class WorkoutActivity : AppCompatActivity() {
         }
     }
 
-    private fun persistSelectedTransform() {
-        getSelectedKeyValues().forEach { (key, view) ->
-            persistTransformFor(key, view)
-        }
+    private val previewOpacity get() = store.buttonOpacity.value / 100f
+
+    override fun onStart() {
+        super.onStart()
+        store.showLayoutPreview(window.decorView.display?.displayId ?: windowManager.defaultDisplay.displayId)
     }
 
-    private fun persistTransformFor(key: String, view: View) {
-        activityScope.launch {
-            val x = if (key == KEY_TIMER) null else view.x.toInt()
-            val y = if (key == KEY_TIMER) null else view.y.toInt()
-            overlayPreferences.saveElementTransform(
-                elementId = key,
-                x = x,
-                y = y,
+    override fun onStop() {
+        store.showLayoutPreview(null)
+        super.onStop()
+    }
+
+    private fun saveLayout() {
+        doneEditButton.isEnabled = false
+        val transforms = editableViews.mapValues { (key, view) ->
+            val default = defaultViewStates.getValue(key)
+            ElementTransform(
+                x = view.x.roundToInt().takeIf { key != KEY_TIMER && it != default.x?.roundToInt() },
+                y = view.y.roundToInt().takeIf { key != KEY_TIMER && it != default.y?.roundToInt() },
                 scaleX = view.scaleX,
                 scaleY = view.scaleY,
                 rotation = view.rotation,
-            )
-            if (workoutRoot.width > AppMagicNumbers.Common.INT_ZERO && workoutRoot.height > AppMagicNumbers.Common.INT_ZERO) {
-                overlayPreferences.saveWorkoutViewportSize(workoutRoot.width, workoutRoot.height)
+                textSizeSp = (view as? TextView)?.let { pxToSp(it.textSize) },
+            ).let { transform ->
+                // Coordinates are stored as pairs so the overlay can scale them across displays.
+                if (transform.x == null && transform.y == null) transform
+                else transform.copy(x = view.x.roundToInt(), y = view.y.roundToInt())
+            }
+        }
+        activityScope.launch {
+            try {
+                overlayPreferences.saveWorkoutLayout(
+                    transforms,
+                    WorkoutViewportSize(workoutRoot.width, workoutRoot.height),
+                )
+                startService(Intent(this@WorkoutActivity, OverlayService::class.java)
+                    .setAction(OverlayService.ACTION_RELOAD_LAYOUT))
+                finish()
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                doneEditButton.isEnabled = true
+                Toast.makeText(this@WorkoutActivity, R.string.error_storage, Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -1178,16 +1044,6 @@ class WorkoutActivity : AppCompatActivity() {
             if (distanceY <= thresholdPx && distanceY < closestDistanceY) {
                 closestDistanceY = distanceY
                 closestCenterY = targetCenterY
-            }
-        }
-
-        // Center magnet should activate on only one axis at a time.
-        // Keep the stronger axis and leave the other axis for spacing smart guides.
-        if (closestCenterX != null && closestCenterY != null) {
-            if (closestDistanceX <= closestDistanceY) {
-                closestCenterY = null
-            } else {
-                closestCenterX = null
             }
         }
 
@@ -1425,17 +1281,7 @@ class WorkoutActivity : AppCompatActivity() {
         return value
     }
 
-    private fun endSession() {
-        timer?.cancel()
-        timer = null
-        setCount = AppMagicNumbers.Common.INT_ZERO
-        totalCount = AppMagicNumbers.Common.INT_ZERO
-        elapsedSeconds = AppMagicNumbers.Common.INT_ZERO
-        finish()
-    }
-
     override fun onDestroy() {
-        timer?.cancel()
         activityScope.cancel()
         super.onDestroy()
     }
@@ -1445,8 +1291,6 @@ class WorkoutActivity : AppCompatActivity() {
         private const val KEY_SET = "workout_set"
         private const val KEY_TOTAL = "workout_total"
         private const val KEY_START = "workout_start"
-        private const val KEY_RESET = "workout_reset"
-        private const val KEY_EDIT = "workout_edit"
         private const val KEY_END = "workout_end"
 
         private const val MIN_SCALE = AppMagicNumbers.Interaction.MIN_SCALE

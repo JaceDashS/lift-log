@@ -1,6 +1,7 @@
-﻿package com.example.workouttimer
+package com.example.workouttimer
 
 import android.app.Notification
+import android.app.ActivityOptions
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -10,6 +11,8 @@ import android.content.pm.ServiceInfo
 import android.content.res.ColorStateList
 import android.graphics.Matrix
 import android.graphics.RectF
+import android.hardware.display.DisplayManager
+import android.hardware.input.InputManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -17,6 +20,7 @@ import android.os.Looper
 import android.os.SystemClock
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.Display
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -28,18 +32,20 @@ import android.widget.FrameLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import com.example.workouttimer.constants.AppMagicNumbers
 import com.example.workouttimer.data.SessionDraft
 import com.example.workouttimer.data.WorkoutStore
 import com.example.workouttimer.ui.HomeActivity
+import com.example.workouttimer.ui.OverlaySetInputs
+import com.example.workouttimer.ui.SettingsActivity
 import com.example.workouttimer.ui.duration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.math.abs
@@ -53,12 +59,23 @@ class OverlayService : Service() {
     private lateinit var overlayPreferences: OverlayPreferences
     private lateinit var windowManager: WindowManager
     private var overlayHostView: View? = null
+    private var overlayDisplayId = Display.DEFAULT_DISPLAY
     private var overlayLayoutParams: WindowManager.LayoutParams? = null
     private val controlButtonWindows = linkedMapOf<String, ControlButtonWindow>()
     private val store by lazy { WorkoutStore.get(this) }
     private var test = false
     private var draft: SessionDraft? = null
-    private var sessionStartedAt = AppMagicNumbers.Common.LONG_ZERO
+    private var setInputs: OverlaySetInputs? = null
+    private val pushing get() = draft?.pushing == true
+    private val buttonOpacity get() = if (pushing) 1f else store.buttonOpacity.value / 100f
+    private val maximumTouchThroughOpacity by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            getSystemService(InputManager::class.java)?.maximumObscuringOpacityForTouch ?: 0.8f
+        } else {
+            1f
+        }
+    }
+    private val touchThroughOpacity get() = buttonOpacity.coerceAtMost(maximumTouchThroughOpacity)
     private var setCount = AppMagicNumbers.Common.INT_ZERO
     private val tickHandler = Handler(Looper.getMainLooper())
     private val tick = object : Runnable {
@@ -71,18 +88,14 @@ class OverlayService : Service() {
     private var editMode = false
     private lateinit var workoutRoot: FrameLayout
     private lateinit var timerText: TextView
+    private lateinit var restNote: TextView
     private lateinit var setCountText: TextView
     private lateinit var totalCountText: TextView
     private lateinit var startButton: Button
-    private lateinit var resetButton: Button
-    private lateinit var editButton: Button
     private lateinit var endButton: Button
     private lateinit var doneEditButton: Button
     private lateinit var resetLayoutButton: Button
-    private lateinit var alphaSlider: SeekBar
-    private lateinit var buttonFontSizeSlider: SeekBar
     private lateinit var buttonSizeSlider: SeekBar
-    private lateinit var setFontSizeSlider: SeekBar
     private lateinit var editToolbar: View
     private lateinit var selectionOverlay: FrameLayout
     private lateinit var selectionBorder: View
@@ -112,32 +125,58 @@ class OverlayService : Service() {
         overlayPreferences = OverlayPreferences(applicationContext)
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         createNotificationChannel()
+        activityScope.launch {
+            store.layoutPreviewDisplay.collect {
+                if (overlayHostView != null) updateControlPanelVisibility()
+            }
+        }
+        activityScope.launch {
+            store.buttonOpacity.collect {
+                updateOverlayOpacity()
+            }
+        }
         debugSelectionLog("service start, logFile=${SelectionDebugLogger.logPath(this)}")
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
+            ACTION_RELOAD_LAYOUT -> {
+                if (overlayHostView == null) {
+                    stopSelf()
+                } else {
+                    removeOverlayWindows()
+                    startOverlayIfNeeded(overlayDisplayId, test)
+                }
+                return START_NOT_STICKY
+            }
+            ACTION_RELOAD_SESSION -> {
+                if (overlayHostView == null) stopSelf() else reloadSession()
+                return START_NOT_STICKY
+            }
             ACTION_END_SESSION -> {
                 finishWorkout()
                 return START_NOT_STICKY
             }
             ACTION_START_TIMER -> {
-                startOverlayIfNeeded()
-                if (!editMode) togglePushRest()
+                if (startOverlayIfNeeded() && !editMode) togglePushRest()
             }
             ACTION_ENABLE_EDIT_MODE -> {
-                startOverlayIfNeeded()
-                toggleEditMode(true)
+                if (startOverlayIfNeeded()) toggleEditMode(true)
             }
             ACTION_START_SERVICE, null -> {
-                startOverlayIfNeeded()
+                val displayId = intent?.getIntExtra(EXTRA_DISPLAY_ID, overlayDisplayId) ?: overlayDisplayId
+                if (!startOverlayIfNeeded(displayId, store.testMode)) return START_NOT_STICKY
                 reloadSession()
             }
         }
         return START_STICKY
     }
     override fun onBind(intent: Intent?): IBinder? = null
-    private fun startOverlayIfNeeded() {
-        if (overlayHostView != null) return
+    private fun startOverlayIfNeeded(
+        displayId: Int = overlayDisplayId,
+        dataset: Boolean = if (overlayHostView != null) test else store.testMode,
+    ): Boolean {
+        if (overlayHostView != null && overlayDisplayId == displayId && test == dataset) return true
+        removeOverlayWindows()
         ServiceCompat.startForeground(
             this,
             AppMagicNumbers.Notification.SERVICE_ID,
@@ -148,12 +187,49 @@ class OverlayService : Service() {
                 AppMagicNumbers.Common.INT_ZERO
             }
         )
-        test = store.testMode
+        test = dataset
         if (store.active(test) == null) {
             endSession()
-            return
+            return false
         }
-        val rootView = LayoutInflater.from(this).inflate(R.layout.overlay_workout, null, false)
+        val display = getSystemService(DisplayManager::class.java)?.getDisplay(displayId)
+        if (display == null) {
+            reportOverlayUnavailable()
+            return false
+        }
+        try {
+            attachOverlay(display)
+        } catch (e: WindowManager.BadTokenException) {
+            reportOverlayUnavailable()
+            return false
+        } catch (e: WindowManager.InvalidDisplayException) {
+            reportOverlayUnavailable()
+            return false
+        } catch (e: SecurityException) {
+            reportOverlayUnavailable()
+            return false
+        }
+        reloadSession()
+        tickHandler.post(tick)
+        return true
+    }
+
+    private fun reportOverlayUnavailable() {
+        Toast.makeText(this, R.string.overlay_display_unavailable, Toast.LENGTH_LONG).show()
+        endSession()
+    }
+
+    private fun attachOverlay(display: Display) {
+        val displayContext = createDisplayContext(display)
+        val overlayContext = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            displayContext.createWindowContext(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY, null)
+        } else {
+            displayContext
+        }
+        overlayContext.setTheme(R.style.Theme_WorkOutTimer)
+        windowManager = overlayContext.getSystemService(WindowManager::class.java)
+        overlayDisplayId = display.displayId
+        val rootView = LayoutInflater.from(overlayContext).inflate(R.layout.overlay_workout, null, false)
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
@@ -164,19 +240,27 @@ class OverlayService : Service() {
                 WindowManager.LayoutParams.TYPE_PHONE
             },
             WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             android.graphics.PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.TOP or Gravity.START
             x = AppMagicNumbers.Common.INT_ZERO
             y = AppMagicNumbers.Common.INT_ZERO
+            alpha = touchThroughOpacity
         }
+        windowManager.addView(rootView, params)
         overlayLayoutParams = params
         overlayHostView = rootView
-        windowManager.addView(rootView, params)
         initializeWorkoutUi(rootView)
-        reloadSession()
-        tickHandler.post(tick)
+        setInputs = OverlaySetInputs(
+            overlayContext, windowManager, workoutRoot, store, test, ::changeSetDraft,
+            openSettings = {
+                val options = ActivityOptions.makeBasic().setLaunchDisplayId(overlayDisplayId)
+                startActivity(Intent(this, SettingsActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK), options.toBundle())
+            },
+        )
+        updateControlPanelVisibility()
     }
     private fun initializeWorkoutUi(rootView: View) {
         editableViews.clear()
@@ -210,18 +294,14 @@ class OverlayService : Service() {
         }
         workoutRoot.setBackgroundColor(android.graphics.Color.TRANSPARENT)
         timerText = rootView.findViewById(R.id.text_timer)
+        restNote = rootView.findViewById(R.id.text_rest_transition)
         setCountText = rootView.findViewById(R.id.text_set_count)
         totalCountText = rootView.findViewById(R.id.text_total_count)
         startButton = rootView.findViewById(R.id.button_start)
-        resetButton = rootView.findViewById(R.id.button_reset_set)
-        editButton = rootView.findViewById(R.id.button_edit)
         endButton = rootView.findViewById(R.id.button_end)
         doneEditButton = rootView.findViewById(R.id.button_done_edit)
         resetLayoutButton = rootView.findViewById(R.id.button_reset_layout)
-        alphaSlider = rootView.findViewById(R.id.slider_alpha)
-        buttonFontSizeSlider = rootView.findViewById(R.id.slider_button_font_size)
         buttonSizeSlider = rootView.findViewById(R.id.slider_button_size)
-        setFontSizeSlider = rootView.findViewById(R.id.slider_set_font_size)
         editToolbar = rootView.findViewById(R.id.edit_toolbar)
         selectionOverlay = rootView.findViewById(R.id.selection_overlay)
         selectionBorder = rootView.findViewById(R.id.selection_border)
@@ -240,9 +320,6 @@ class OverlayService : Service() {
         startButton.setOnClickListener {
             if (!editMode) togglePushRest()
         }
-        editButton.setOnClickListener {
-            if (!editMode) toggleEditMode(true)
-        }
         endButton.setOnClickListener {
             if (!editMode) finishWorkout()
         }
@@ -254,9 +331,8 @@ class OverlayService : Service() {
         editableViews[KEY_SET] = setCountText
         editableViews[KEY_TOTAL] = totalCountText
         editableViews[KEY_START] = startButton
-        editableViews[KEY_RESET] = resetButton
-        editableViews[KEY_EDIT] = editButton
         editableViews[KEY_END] = endButton
+        editableViews.putAll(OverlaySetInputs.layoutElements(rootView))
         defaultButtonTextSizePx = startButton.textSize
         defaultSetTextSizePx = setCountText.textSize
         editableViews.forEach { (key, view) ->
@@ -269,30 +345,6 @@ class OverlayService : Service() {
         attachTransformHandlers()
         attachResizeHandleHandlers()
         attachEditToolbarDragHandler()
-        alphaSlider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (!fromUser) return
-                val alpha = OverlayPreferences.MIN_ALPHA +
-                    (progress / AppMagicNumbers.Alpha.PROGRESS_MAX) * (OverlayPreferences.MAX_ALPHA - OverlayPreferences.MIN_ALPHA)
-                workoutRoot.alpha = alpha
-                updateOverlayWindowInteractivity()
-                activityScope.launch { overlayPreferences.saveAlpha(alpha) }
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-        })
-        buttonFontSizeSlider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (!fromUser) return
-                applyButtonFontSizeSp(progressToRange(
-                    progress = progress,
-                    min = AppMagicNumbers.EditSliders.BUTTON_FONT_MIN_SP,
-                    max = AppMagicNumbers.EditSliders.BUTTON_FONT_MAX_SP
-                ))
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-        })
         buttonSizeSlider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (!fromUser) return
@@ -305,28 +357,9 @@ class OverlayService : Service() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
         })
-        setFontSizeSlider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (!fromUser) return
-                applySetFontSizeSp(progressToRange(
-                    progress = progress,
-                    min = AppMagicNumbers.EditSliders.SET_FONT_MIN_SP,
-                    max = AppMagicNumbers.EditSliders.SET_FONT_MAX_SP
-                ))
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-        })
-        activityScope.launch {
-            val state = overlayPreferences.state.first()
-            workoutRoot.alpha = state.alpha
-            alphaSlider.progress = (
-                (state.alpha - OverlayPreferences.MIN_ALPHA) * AppMagicNumbers.Alpha.PROGRESS_MAX /
-                    (OverlayPreferences.MAX_ALPHA - OverlayPreferences.MIN_ALPHA)
-                ).toInt()
-        }
-        initializeEditControlSliders()
+        initializeButtonSizeSlider()
         workoutRoot.post {
+            if (overlayHostView !== rootView) return@post
             updateDefaultToolbarPosition()
             editToolbar.x = defaultToolbarX
             editToolbar.y = defaultToolbarY
@@ -347,9 +380,13 @@ class OverlayService : Service() {
                     (savedViewport.width != currentViewportWidth || savedViewport.height != currentViewportHeight)
                 editableViews.forEach { (key, view) ->
                     val transform = overlayPreferences.readElementTransform(key)
+                    if (overlayHostView !== rootView) return@launch
                     view.scaleX = transform.scaleX
                     view.scaleY = transform.scaleY
                     view.rotation = transform.rotation
+                    if (view is TextView) {
+                        transform.textSizeSp?.let { view.setTextSize(TypedValue.COMPLEX_UNIT_SP, it) }
+                    }
                     if (key != KEY_TIMER && transform.x != null && transform.y != null) {
                         val scaled = scalePositionToCurrentViewport(
                             view = view,
@@ -666,7 +703,6 @@ class OverlayService : Service() {
         return ResizeScaleDelta(deltaX, deltaY)
     }
 
-    /** Reads the stored draft so changes made on the Home screen apply before the next action. */
     private fun reloadSession() {
         if (overlayHostView == null) return
         val current = store.active(test)
@@ -675,54 +711,120 @@ class OverlayService : Service() {
             return
         }
         draft = current
-        val session = store.sessions(test).firstOrNull { it.id == current.sessionId }
-        sessionStartedAt = session?.startedAt ?: System.currentTimeMillis()
-        setCount = session?.sets?.size ?: AppMagicNumbers.Common.INT_ZERO
+        val session = store.sessions(test, sessionId = current.sessionId).singleOrNull()
+        val sets = session?.sets.orEmpty()
+        setCount = sets.size + current.unloggedSets
         updateTimerView()
         updateCounterViews()
     }
 
-    /** PUSH freezes the rest timer; REST records the set with the inputs chosen before START. */
     private fun togglePushRest() {
         val current = store.active(test) ?: return endSession()
-        val next = try {
+        if (current.pushing && !current.setLogged && current.exercise.isNotBlank()) {
+            setInputs?.confirmRest(current) { reps, weight ->
+                transitionWorkout {
+                    store.startRest(current, test, reps.toString(), weight)
+                }
+            }
+            return
+        }
+        transitionWorkout {
             if (current.pushing) {
-                store.completeSet(current, test, keepReps = true).also { setCount += AppMagicNumbers.Common.INT_ONE }
+                store.startRest(current, test)
             } else {
-                current.push(System.currentTimeMillis(), SystemClock.elapsedRealtime(), store.bootCount())
-                    .also { store.saveDraft(it, test) }
+                val next = current.push(System.currentTimeMillis(), SystemClock.elapsedRealtime(), store.bootCount())
+                store.replaceDraft(current, next, test)
+            }
+        }
+    }
+
+    private fun transitionWorkout(action: () -> Unit): Boolean {
+        try {
+            action()
+        } catch (_: Exception) {
+            Toast.makeText(this, R.string.error_storage, Toast.LENGTH_LONG).show()
+            reloadSession()
+            return false
+        }
+        reloadSession()
+        return true
+    }
+
+    private fun changeSetDraft(expected: SessionDraft, next: SessionDraft): Boolean {
+        try {
+            if (!store.replaceDraft(expected, next, test)) {
+                reloadSession()
+                return false
             }
         } catch (_: Exception) {
             Toast.makeText(this, R.string.error_storage, Toast.LENGTH_LONG).show()
-            return
+            return false
         }
         draft = next
         updateTimerView()
         updateCounterViews()
+        return true
     }
 
     private fun updateTimerView() {
         val current = draft ?: return
-        timerText.text = duration(current.restMillis(
+        timerText.text = if (current.pushing) getString(R.string.workout_go) else duration(current.restMillis(
             System.currentTimeMillis(), SystemClock.elapsedRealtime(), store.bootCount()))
+        val showNote = !editMode && current.isExerciseTransition
+        restNote.visibility = if (showNote) View.VISIBLE else View.GONE
+        if (showNote) {
+            val bottom = calculateTransformedBounds(timerText).bottom
+            val gap = restNote.resources.getDimension(R.dimen.lift_gap_xs)
+            restNote.translationY = (bottom + gap).coerceIn(
+                0f, (workoutRoot.height - restNote.height).toFloat().coerceAtLeast(0f)
+            ) - restNote.top
+        }
     }
 
     private fun updateTotalTimeView() {
-        if (draft == null) return
+        val current = draft ?: return
+        val elapsed = current.workoutStartedAt?.let { System.currentTimeMillis() - it } ?: 0L
         totalCountText.text = getString(R.string.total_time_format,
-            duration(System.currentTimeMillis() - sessionStartedAt))
+            duration(elapsed))
     }
 
     private fun updateCounterViews() {
         setCountText.text = getString(R.string.set_count_format, setCount)
-        startButton.setText(if (draft?.pushing == true) R.string.start else R.string.push)
+        startButton.setText(if (pushing) R.string.start_rest else R.string.start_set)
+        if (!editMode) updatePhaseButtonColors()
+        draft?.let { setInputs?.render(it) }
+        updateOverlayOpacity()
         updateTotalTimeView()
         if (controlButtonWindows.isNotEmpty()) syncControlButtonWindows()
         refreshNotification()
     }
 
+    private fun updatePhaseButtonColors() {
+        val highlight = pushing && !editMode
+        startButton.backgroundTintList = if (highlight) {
+            ContextCompat.getColorStateList(this, R.color.lift_acid)
+        } else {
+            defaultButtonTints[KEY_START]
+        }
+        startButton.setTextColor(ContextCompat.getColor(this, if (highlight) R.color.lift_on_acid else R.color.lift_text))
+    }
+
+    private fun updateOverlayOpacity() {
+        setInputs?.setOpacity(buttonOpacity)
+        controlButtonWindows.values.forEach { window ->
+            window.view.alpha = buttonOpacity * window.sourceButton.alpha
+        }
+        val host = overlayHostView ?: return
+        val params = overlayLayoutParams ?: return
+        val opacity = touchThroughOpacity
+        if (!editMode && params.alpha != opacity) {
+            params.alpha = opacity
+            windowManager.updateViewLayout(host, params)
+        }
+    }
+
     private fun syncControlButtonWindows(forceCreate: Boolean = false) {
-        if (!::startButton.isInitialized || startButton.width == AppMagicNumbers.Common.INT_ZERO) return
+        if (overlayHostView == null || !::startButton.isInitialized || startButton.width == AppMagicNumbers.Common.INT_ZERO) return
 
         if (forceCreate || controlButtonWindows.isEmpty()) {
             rebuildControlButtonWindows()
@@ -734,7 +836,7 @@ class OverlayService : Service() {
             window.view.setTextSize(TypedValue.COMPLEX_UNIT_PX, source.textSize)
             window.view.backgroundTintList = source.backgroundTintList
             window.view.setTextColor(source.currentTextColor)
-            window.view.alpha = source.alpha
+            window.view.alpha = source.alpha * buttonOpacity
             window.view.scaleX = source.scaleX
             window.view.scaleY = source.scaleY
             window.view.rotation = source.rotation
@@ -745,6 +847,7 @@ class OverlayService : Service() {
             windowManager.updateViewLayout(window.view, window.layoutParams)
         }
 
+        setInputs?.syncPositions()
         updateControlPanelVisibility()
     }
 
@@ -767,11 +870,9 @@ class OverlayService : Service() {
         sourceButton: Button,
         onClick: () -> Unit,
     ) {
-        val proxyButton = Button(this).apply {
-            text = sourceButton.text
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, sourceButton.textSize)
-            backgroundTintList = sourceButton.backgroundTintList
-            setTextColor(sourceButton.currentTextColor)
+        val proxyButton = (LayoutInflater.from(sourceButton.context)
+            .inflate(R.layout.overlay_compact_button, null, false) as Button).apply {
+            alpha = sourceButton.alpha * buttonOpacity
             setOnClickListener { onClick() }
         }
 
@@ -787,7 +888,7 @@ class OverlayService : Service() {
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
             android.graphics.PixelFormat.TRANSLUCENT
         ).apply {
-            gravity = Gravity.TOP or Gravity.START
+            gravity = Gravity.TOP or Gravity.LEFT
             x = sourceButton.x.roundToInt()
             y = sourceButton.y.roundToInt()
         }
@@ -797,12 +898,13 @@ class OverlayService : Service() {
     }
 
     private fun updateControlPanelVisibility() {
+        val showOverlay = store.layoutPreviewDisplay.value != overlayDisplayId
+        overlayHostView?.visibility = if (showOverlay) View.VISIBLE else View.INVISIBLE
+        setInputs?.show(!editMode && showOverlay)
         controlButtonWindows.values.forEach { window ->
-            window.view.visibility = if (editMode) View.GONE else View.VISIBLE
+            window.view.visibility = if (editMode || !showOverlay) View.GONE else View.VISIBLE
         }
         startButton.visibility = if (editMode) View.VISIBLE else View.INVISIBLE
-        resetButton.visibility = View.GONE
-        editButton.visibility = View.GONE
         endButton.visibility = if (editMode) View.VISIBLE else View.INVISIBLE
     }
 
@@ -813,7 +915,7 @@ class OverlayService : Service() {
         params.flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
             if (shouldPassThrough) WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE else AppMagicNumbers.Common.INT_ZERO
-        params.alpha = if (shouldPassThrough) workoutRoot.alpha.coerceAtMost(0.8f) else 1f
+        params.alpha = if (shouldPassThrough) touchThroughOpacity else 1f
         windowManager.updateViewLayout(hostView, params)
         updateControlPanelVisibility()
         debugSelectionLog("updateOverlayWindowInteractivity passThrough=$shouldPassThrough, windowAlpha=${params.alpha}")
@@ -824,58 +926,19 @@ class OverlayService : Service() {
         manager.notify(AppMagicNumbers.Notification.SERVICE_ID, buildNotification())
     }
 
-    private fun initializeEditControlSliders() {
-        val currentButtonSizeSp = pxToSp(startButton.textSize)
-        val currentSetSizeSp = pxToSp(setCountText.textSize)
-        val currentButtonScale = startButton.scaleX
-
-        buttonFontSizeSlider.progress = rangeToProgress(
-            value = currentButtonSizeSp,
-            min = AppMagicNumbers.EditSliders.BUTTON_FONT_MIN_SP,
-            max = AppMagicNumbers.EditSliders.BUTTON_FONT_MAX_SP
-        )
+    private fun initializeButtonSizeSlider() {
         buttonSizeSlider.progress = rangeToProgress(
-            value = currentButtonScale,
+            value = startButton.scaleX,
             min = AppMagicNumbers.EditSliders.BUTTON_SCALE_MIN,
-            max = AppMagicNumbers.EditSliders.BUTTON_SCALE_MAX
+            max = AppMagicNumbers.EditSliders.BUTTON_SCALE_MAX,
         )
-        setFontSizeSlider.progress = rangeToProgress(
-            value = currentSetSizeSp,
-            min = AppMagicNumbers.EditSliders.SET_FONT_MIN_SP,
-            max = AppMagicNumbers.EditSliders.SET_FONT_MAX_SP
-        )
-    }
-
-    private fun applyButtonFontSizeSp(sizeSp: Float) {
-        listOf(
-            startButton,
-            resetButton,
-            editButton,
-            endButton,
-            doneEditButton,
-            resetLayoutButton
-        ).forEach { button ->
-            button.setTextSize(TypedValue.COMPLEX_UNIT_SP, sizeSp)
-        }
     }
 
     private fun applyButtonScale(scale: Float) {
-        listOf(
-            startButton,
-            resetButton,
-            editButton,
-            endButton,
-            doneEditButton,
-            resetLayoutButton
-        ).forEach { button ->
+        editableViews.values.filterIsInstance<Button>().forEach { button ->
             button.scaleX = scale
             button.scaleY = scale
         }
-    }
-
-    private fun applySetFontSizeSp(sizeSp: Float) {
-        setCountText.setTextSize(TypedValue.COMPLEX_UNIT_SP, sizeSp)
-        totalCountText.setTextSize(TypedValue.COMPLEX_UNIT_SP, sizeSp)
     }
 
     private fun progressToRange(progress: Int, min: Float, max: Float): Float {
@@ -892,10 +955,6 @@ class OverlayService : Service() {
         val ratio = if (max > min) (clamped - min) / (max - min) else AppMagicNumbers.Common.FLOAT_ZERO
         return (ratio * AppMagicNumbers.EditSliders.PROGRESS_MAX).roundToInt()
             .coerceIn(AppMagicNumbers.EditSliders.PROGRESS_MIN, AppMagicNumbers.EditSliders.PROGRESS_MAX)
-    }
-
-    private fun pxToSp(px: Float): Float {
-        return px / resources.displayMetrics.scaledDensity
     }
 
     private fun toggleEditMode(enabled: Boolean) {
@@ -928,6 +987,7 @@ class OverlayService : Service() {
         }
         selectionOverlay.visibility = View.GONE
         hideSnapGuideLines()
+        updatePhaseButtonColors()
         updateOverlayWindowInteractivity()
         refreshNotification()
     }
@@ -950,15 +1010,13 @@ class OverlayService : Service() {
         editToolbar.x = defaultToolbarX
         editToolbar.y = defaultToolbarY
         startButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultButtonTextSizePx)
-        resetButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultButtonTextSizePx)
-        editButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultButtonTextSizePx)
         endButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultButtonTextSizePx)
         doneEditButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultButtonTextSizePx)
         resetLayoutButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultButtonTextSizePx)
         applyButtonScale(AppMagicNumbers.Common.FLOAT_ONE)
         setCountText.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultSetTextSizePx)
         totalCountText.setTextSize(TypedValue.COMPLEX_UNIT_PX, defaultSetTextSizePx)
-        initializeEditControlSliders()
+        initializeButtonSizeSlider()
         editableViews.forEach { (key, view) ->
             view.alpha = AppMagicNumbers.Interaction.NON_SELECTED_ALPHA
             if (view is Button) {
@@ -1395,16 +1453,6 @@ class OverlayService : Service() {
             }
         }
 
-        // Center magnet should activate on only one axis at a time.
-        // Keep the stronger axis and leave the other axis for spacing smart guides.
-        if (closestCenterX != null && closestCenterY != null) {
-            if (closestDistanceX <= closestDistanceY) {
-                closestCenterY = null
-            } else {
-                closestCenterX = null
-            }
-        }
-
         val spacingCenterY = findEqualSpacingCenterY(
             alignedCenterX = closestCenterX ?: candidateCenterX,
             candidateCenterY = candidateCenterY,
@@ -1639,12 +1687,8 @@ class OverlayService : Service() {
         return value
     }
 
-    /** Ends the stored workout; a set in progress is saved with the inputs chosen before START. */
     private fun finishWorkout() {
         try {
-            store.active(test)?.let { current ->
-                if (current.pushing) store.completeSet(current, test, keepReps = true)
-            }
             store.end(test)
         } catch (_: Exception) {
             Toast.makeText(this, R.string.error_storage, Toast.LENGTH_LONG).show()
@@ -1655,24 +1699,17 @@ class OverlayService : Service() {
 
     /** Removes the overlay windows and stops the service without touching stored records. */
     private fun endSession() {
-        tickHandler.removeCallbacks(tick)
-        draft = null
-        setCount = AppMagicNumbers.Common.INT_ZERO
-        controlButtonWindows.values.forEach { window ->
-            windowManager.removeView(window.view)
-        }
-        controlButtonWindows.clear()
-        overlayHostView?.let { view ->
-            windowManager.removeView(view)
-        }
-        overlayHostView = null
-        overlayLayoutParams = null
+        removeOverlayWindows()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
-    override fun onDestroy() {
+    private fun removeOverlayWindows() {
         tickHandler.removeCallbacks(tick)
+        draft = null
+        setCount = AppMagicNumbers.Common.INT_ZERO
+        setInputs?.dispose()
+        setInputs = null
         controlButtonWindows.values.forEach { window ->
             windowManager.removeView(window.view)
         }
@@ -1682,6 +1719,10 @@ class OverlayService : Service() {
         }
         overlayHostView = null
         overlayLayoutParams = null
+    }
+
+    override fun onDestroy() {
+        removeOverlayWindows()
         activityScope.cancel()
         super.onDestroy()
     }
@@ -1719,20 +1760,28 @@ class OverlayService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val pushing = draft?.pushing == true
+        val state = when {
+            draft?.workoutStartedAt == null -> R.string.session_state_ready
+            pushing -> R.string.session_state_push
+            else -> R.string.session_state_rest
+        }
         return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(getString(R.string.notification_title))
             .setContentText(getString(R.string.notification_set_format, setCount,
-                getString(if (pushing) R.string.session_state_push else R.string.session_state_rest)))
+                getString(state)))
             .setContentIntent(pendingIntent)
             .setOngoing(true)
-            .addAction(0, getString(if (pushing) R.string.start else R.string.push), toggleIntent)
+            .addAction(0, getString(if (pushing) R.string.start_rest else R.string.start_set), toggleIntent)
             .addAction(0, getString(R.string.end), endIntent)
             .build()
     }
 
     companion object {
         const val ACTION_START_SERVICE = "com.example.workouttimer.action.START_SERVICE"
+        const val ACTION_RELOAD_LAYOUT = "com.example.workouttimer.action.RELOAD_LAYOUT"
+        const val ACTION_RELOAD_SESSION = "com.example.workouttimer.action.RELOAD_SESSION"
+        const val EXTRA_DISPLAY_ID = "com.example.workouttimer.extra.DISPLAY_ID"
         const val ACTION_END_SESSION = "com.example.workouttimer.action.END_SESSION"
         const val ACTION_START_TIMER = "com.example.workouttimer.action.START_TIMER"
         const val ACTION_ENABLE_EDIT_MODE = "com.example.workouttimer.action.ENABLE_EDIT_MODE"
@@ -1742,8 +1791,6 @@ class OverlayService : Service() {
         private const val KEY_SET = "workout_set"
         private const val KEY_TOTAL = "workout_total"
         private const val KEY_START = "workout_start"
-        private const val KEY_RESET = "workout_reset"
-        private const val KEY_EDIT = "workout_edit"
         private const val KEY_END = "workout_end"
 
         private const val MIN_SCALE = AppMagicNumbers.Interaction.MIN_SCALE

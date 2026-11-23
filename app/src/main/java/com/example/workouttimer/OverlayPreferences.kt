@@ -26,6 +26,7 @@ data class ElementTransform(
     val scaleX: Float,
     val scaleY: Float,
     val rotation: Float,
+    val textSizeSp: Float? = null,
 )
 
 data class WorkoutViewportSize(
@@ -94,6 +95,21 @@ class OverlayPreferences(private val context: Context) {
         }
     }
 
+    suspend fun saveWorkoutLayout(transforms: Map<String, ElementTransform>, viewport: WorkoutViewportSize) {
+        context.dataStore.edit { prefs ->
+            for ((id, transform) in transforms) {
+                if (transform.x == null) prefs.remove(elementXKey(id)) else prefs[elementXKey(id)] = transform.x
+                if (transform.y == null) prefs.remove(elementYKey(id)) else prefs[elementYKey(id)] = transform.y
+                prefs[elementScaleXKey(id)] = transform.scaleX
+                prefs[elementScaleYKey(id)] = transform.scaleY
+                prefs[elementRotationKey(id)] = transform.rotation
+                if (transform.textSizeSp != null) prefs[elementTextSizeKey(id)] = transform.textSizeSp
+            }
+            prefs[WORKOUT_VIEWPORT_WIDTH_KEY] = viewport.width
+            prefs[WORKOUT_VIEWPORT_HEIGHT_KEY] = viewport.height
+        }
+    }
+
     suspend fun readWorkoutViewportSize(): WorkoutViewportSize? {
         val prefs = context.dataStore.data.first()
         val width = prefs[WORKOUT_VIEWPORT_WIDTH_KEY] ?: return null
@@ -110,6 +126,7 @@ class OverlayPreferences(private val context: Context) {
             scaleX = prefs[elementScaleXKey(elementId)] ?: prefs[elementScaleKey(elementId)] ?: AppMagicNumbers.Interaction.SCALE_DEFAULT,
             scaleY = prefs[elementScaleYKey(elementId)] ?: prefs[elementScaleKey(elementId)] ?: AppMagicNumbers.Interaction.SCALE_DEFAULT,
             rotation = prefs[elementRotationKey(elementId)] ?: AppMagicNumbers.Interaction.NO_ROTATION,
+            textSizeSp = prefs[elementTextSizeKey(elementId)],
         )
     }
 
@@ -138,6 +155,7 @@ class OverlayPreferences(private val context: Context) {
         private fun elementScaleYKey(elementId: String) = floatPreferencesKey("${elementId}_scale_y")
         private fun elementScaleKey(elementId: String) = floatPreferencesKey("${elementId}_scale")
         private fun elementRotationKey(elementId: String) = floatPreferencesKey("${elementId}_rotation")
+        private fun elementTextSizeKey(elementId: String) = floatPreferencesKey("${elementId}_text_size_sp")
     }
 }
 

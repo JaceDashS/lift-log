@@ -2,7 +2,7 @@
 
 [Product overview and workout example](https://jace-s.com/en/apps/lift-log/)
 
-Android workout logging app. Its core feature is a semi-transparent workout overlay: START floats the rest timer over any app, so the screen behind stays usable while the timer is visible. The launcher opens the Lift Log home screen, where exercise, weight and reps are chosen before START, plus RECORDS, LAYOUT and SETTINGS. Sessions, rest timing, exercise history, comparison charts and isolated test records are stored locally. See [App Screens](docs/specs/workout/30-app-screens.md).
+Android workout logging app. Its core feature is a semi-transparent workout overlay: START floats the rest timer over any app, so the screen behind stays usable while the timer is visible. Home offers START, RECORDS and SETTINGS. Choose an exercise and enter its weight and reps to log a set. The app stores workouts locally. Records displays a comparison chart and uses example data in debug builds when no workouts have been saved. See [App Screens](docs/specs/workout/30-app-screens.md).
 
 The overlay layout has two editing surfaces that must behave the same way:
 
@@ -21,13 +21,11 @@ This README is the project-level reference for app purpose, edit-mode behavior, 
 - Compile SDK: `35`
 - Build: Gradle Android application
 
-## Overlay Tools Screen
+## iPhone prototype
 
-Opened from SETTINGS > Overlay tools. Workouts start from Home START, so `Start Workout` is hidden here. It exposes these actions:
+Open `ios/LiftLog.xcodeproj` in Xcode and run the `LiftLog` scheme on an iPhone simulator. The SwiftUI target supports iOS 16 and later. Add an exercise in Settings, open the workout timer and tap PUSH. Tap REST to enter reps and save the set. The saved set appears in Records. The unfinished workout and recorded sets use local app storage.
 
-- `Dev Mode`: opens the in-app editing screen, also reachable from Home LAYOUT
-- `Reset All Settings`: clears saved layout and related preferences
-- `Clear Log`: deletes the selection debug log file
+Records shows average weight, reps and rest as percentage changes on a horizontally scrollable chart. Tap a point to see its actual averages and switch between calendar days and workout sessions above the chart. The Debug build includes Bench Press and Squat samples under Sample, which opens by default when Saved is empty. Live Activities and record editing are later work.
 
 ## Modes
 
@@ -55,13 +53,13 @@ Overlay mode has two distinct states.
 - Touches on the main overlay pass through to the app behind it.
 - Touchable overlay buttons remain available at the same visual positions for overlay control.
 - Notification actions are also available for overlay control.
-- The overlay shows the rest timer in the center, `Set`, total workout `Time`, a `Push`/`Rest` button and `End`.
-- `Push` freezes the rest timer; `Rest` saves the set with the values chosen on Home and restarts the timer.
-- Layout editing happens before START through Home LAYOUT, so `Reset` and `Edit` are not shown in the overlay.
+- The overlay shows the rest timer in the center, `Set`, total workout `Time`, `PUSH`/`REST`, `End` and individual exercise and weight controls.
+- `PUSH` freezes the preceding rest time and displays `GO` in the center. `REST` opens the rep entry dialog. Confirming reps saves the set and restarts the timer. Rest is saved only for consecutive sets of the same exercise. Records > Edit records opens the editable set table.
+- Layout editing happens before START through SETTINGS > LAYOUT, so `Reset` and `Edit` are not shown in the overlay.
 
 ### Overlay Edit State
 
-- Not entered during a workout; the same rules apply in Dev Mode, opened from Home LAYOUT before START.
+- Not entered during a workout; the same rules apply in Dev Mode, opened from SETTINGS > LAYOUT before START.
 - The full-screen overlay becomes touchable.
 - Selection, deselection, move, resize, rotate, and edit-panel interaction are enabled.
 - Leaving edit mode returns the overlay to touch-through behavior.

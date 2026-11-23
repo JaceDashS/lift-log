@@ -10,4 +10,6 @@
     <color name="lift_text">#FFF2F4F7</color>
     <color name="lift_text_dim">#FF8A929C</color>
     <color name="lift_down">#FFFF5A6E</color>
+    <color name="lift_trend_reps">#FF73C9FF</color>
+    <color name="lift_trend_rest">#FFFFAA79</color>
 </resources>
