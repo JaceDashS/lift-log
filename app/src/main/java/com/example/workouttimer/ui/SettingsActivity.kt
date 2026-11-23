@@ -30,18 +30,28 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent(this, WorkoutActivity::class.java))
         }
         findViewById<View>(R.id.button_settings_about).setOnClickListener {
-            AlertDialog.Builder(this).setTitle(R.string.settings_about).setMessage(R.string.settings_about_message)
+            val version = packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
+            AlertDialog.Builder(this)
+                .setTitle(R.string.settings_about)
+                .setMessage(getString(R.string.settings_about_message, version))
+                .setNeutralButton(R.string.settings_about_developer) { _, _ ->
+                    openSite("https://jace-s.com/about")
+                }
                 .setPositiveButton(android.R.string.ok, null).show()
         }
         findViewById<View>(R.id.button_settings_feedback).setOnClickListener {
-            try {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/JaceDashS/lift-log/issues")))
-            } catch (_: ActivityNotFoundException) {
-                Toast.makeText(this, R.string.settings_feedback_unavailable, Toast.LENGTH_LONG).show()
-            }
+            openSite("https://jace-s.com/feedback/8")
         }
         renderExercises()
         bindButtonOpacity()
+    }
+
+    private fun openSite(url: String) {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        } catch (_: ActivityNotFoundException) {
+            Toast.makeText(this, getString(R.string.settings_link_unavailable, url), Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun bindButtonOpacity() {

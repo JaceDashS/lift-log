@@ -4,6 +4,8 @@
 
 Android workout logging app. Its core feature is a semi-transparent workout overlay: START floats the rest timer over any app, so the screen behind stays usable while the timer is visible. Home offers START, RECORDS and SETTINGS. Choose an exercise and enter its weight and reps to log a set. The app stores workouts locally. Records displays a comparison chart and uses example data in debug builds when no workouts have been saved. See [App Screens](docs/specs/workout/30-app-screens.md).
 
+Download the signed Android APK from [GitHub Releases](https://github.com/JaceDashS/lift-log/releases/latest). On Android and iOS, open Settings to see the installed version and developer information or to leave public feedback on [jace-s.com](https://jace-s.com/feedback/8).
+
 The overlay layout has two editing surfaces that must behave the same way:
 
 - `Dev Mode`: activity-based editing screen

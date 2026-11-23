@@ -109,13 +109,19 @@ struct ExerciseListView: View {
                 newExercise = ""
                 adding = true
             } label: { Label("Add exercise", systemImage: "plus") }
+            if selecting == nil {
+                Section("Lift Log") {
+                    NavigationLink("About Lift Log") { AboutLiftLogView() }
+                    Link("Feedback", destination: URL(string: "https://jace-s.com/feedback/8")!)
+                }
+            }
             if let error = store.storageError {
                 Text(error).foregroundStyle(.red)
             }
         }
         .scrollContentBackground(.hidden)
         .background(LiftTheme.background.ignoresSafeArea())
-        .navigationTitle(selecting == nil ? "Exercises" : "Choose exercise")
+        .navigationTitle(selecting == nil ? "Settings" : "Choose exercise")
         .alert("Add exercise", isPresented: $adding) {
             TextField("Exercise name", text: $newExercise)
                 .textInputAutocapitalization(.words)
@@ -139,5 +145,20 @@ struct ExerciseListView: View {
             }
         }
         .contentShape(Rectangle())
+    }
+}
+
+private struct AboutLiftLogView: View {
+    var body: some View {
+        List {
+            if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                LabeledContent("Version", value: version)
+            }
+            Text("Lift Log records workout sets on this device. Developed by JaceDashS.")
+            Link("About the developer", destination: URL(string: "https://jace-s.com/about")!)
+        }
+        .scrollContentBackground(.hidden)
+        .background(LiftTheme.background.ignoresSafeArea())
+        .navigationTitle("About Lift Log")
     }
 }
