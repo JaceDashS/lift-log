@@ -51,4 +51,4 @@ flowchart LR
 
 - [Specification](../../specs/workout/20-recording-roadmap.md)
 - [Architecture](../../architecture/10-overview.md)
-- [Scenarios](../../testing/scenarios/workout/20-recording-roadmap.md)
+- [Scenarios](../../testing/test-cases/workout/20-recording-roadmap.md)

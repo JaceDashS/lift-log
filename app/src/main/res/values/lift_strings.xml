@@ -70,7 +70,7 @@
     <string name="workout_go">GO</string>
     <string name="settings_exercises">Exercises</string>
     <string name="settings_no_exercises">Your exercise list is empty.</string>
-    <string name="settings_about">About</string>
+    <string name="settings_about">About Developer</string>
     <string name="settings_feedback">Feedback</string>
     <string name="settings_link_unavailable">Open %1$s in a browser.</string>
     <string name="feedback_public">Your feedback will appear publicly on jace-s.com under Lift Log.</string>

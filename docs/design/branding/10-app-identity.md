@@ -32,4 +32,4 @@ flowchart LR
 
 - [Specification](../../specs/branding/10-app-identity.md)
 - [Architecture](../../architecture/10-overview.md)
-- [Scenarios](../../testing/scenarios/branding/10-app-identity.md)
+- [Scenarios](../../testing/test-cases/branding/10-app-identity.md)

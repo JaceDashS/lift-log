@@ -112,7 +112,7 @@ struct ExerciseListView: View {
             } label: { Label("Add exercise", systemImage: "plus") }
             if selecting == nil {
                 Section("Lift Log") {
-                    Link("About", destination: URL(string: "https://jace-s.com/about")!)
+                    Link("About Developer", destination: URL(string: "https://jace-s.com/about")!)
                     Button("Feedback") { showingFeedback = true }
                 }
             }

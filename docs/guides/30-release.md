@@ -42,5 +42,5 @@ flowchart LR
 - Expected result: GitHub hosts an installable release APK without publishing the keystore or password. Later releases signed by the same key can update this installation.
 
 - [Development](10-development.md)
-- [Release Scenarios](../testing/scenarios/release/10-publication.md)
+- [Release Scenarios](../testing/test-cases/release/10-publication.md)
 - [Android Signing](https://developer.android.com/studio/publish/app-signing)

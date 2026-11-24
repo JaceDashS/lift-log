@@ -39,4 +39,4 @@ flowchart LR
 
 - [Specification](../../specs/workout/30-app-screens.md)
 - [Architecture](../../architecture/10-overview.md)
-- [Scenarios](../../testing/scenarios/workout/30-app-screens.md)
+- [Scenarios](../../testing/test-cases/workout/30-app-screens.md)

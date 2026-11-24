@@ -162,7 +162,7 @@
 
 ## Related Documents
 - [Design](../../design/workout/10-edit-mode.md)
-- [Scenarios](../../testing/scenarios/workout/10-edit-mode.md)
+- [Scenarios](../../testing/test-cases/workout/10-edit-mode.md)
 
 ## Representative Scenario
 - Input: Set and total are selected.

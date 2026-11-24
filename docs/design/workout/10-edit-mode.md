@@ -1,7 +1,7 @@
 # Edit Mode Design
 - [Specification](../../specs/workout/10-edit-mode.md)
 - [Architecture](../../architecture/10-overview.md)
-- [Scenarios](../../testing/scenarios/workout/10-edit-mode.md)
+- [Scenarios](../../testing/test-cases/workout/10-edit-mode.md)
 
 ## Inputs And Outputs
 Inputs are Android lifecycle events, touch events, slider changes, service actions and saved preferences. Outputs include timer text, selection visuals, transforms, overlay windows, notifications and saved layout values.
